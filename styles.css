@@ -1,0 +1,1860 @@
+/* Luxury Design System for Student Diagnostic Assessment & Director Consulting */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&family=Noto+Sans+KR:wght@400;500;700;900&display=swap');
+
+:root {
+  --primary-navy: #0f172a;
+  --primary-blue: #1e3a8a;
+  --accent-gold: #d97706;
+  --accent-gold-light: #fffbeb;
+  --accent-teal: #0d9488;
+  --accent-red: #dc2626;
+  --card-shadow: 0 20px 40px -15px rgba(15, 23, 42, 0.15), 0 0 15px rgba(217, 119, 6, 0.08);
+  --border-light: #e2e8f0;
+  --radius-lg: 16px;
+  --radius-md: 10px;
+  --radius-sm: 6px;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Noto Sans KR', 'Inter', sans-serif;
+  background: #f1f5f9;
+  color: #1e293b;
+  line-height: 1.6;
+  min-height: 100vh;
+}
+
+/* Header Navbar */
+.app-navbar {
+  background: var(--primary-navy);
+  color: #ffffff;
+  padding: 12px 32px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 3px solid var(--accent-gold);
+  height: 64px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+.nav-brand { display: flex; align-items: center; gap: 14px; }
+.nav-logo-badge {
+  background: linear-gradient(135deg, #d97706, #b45309);
+  color: #ffffff;
+  font-weight: 900;
+  font-size: 0.9rem;
+  padding: 6px 12px;
+  border-radius: 6px;
+  letter-spacing: 1px;
+}
+.nav-title { font-size: 1.15rem; font-weight: 700; color: #f8fafc; }
+.nav-subtitle { font-size: 0.8rem; color: #94a3b8; }
+.nav-actions { display: flex; gap: 10px; }
+
+.btn-nav-action {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  color: #ffffff;
+  padding: 8px 18px;
+  border-radius: 30px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.btn-nav-action:hover { background: rgba(255, 255, 255, 0.2); }
+.btn-nav-gold { border-color: var(--accent-gold); color: #fef3c7; }
+.btn-nav-gold:hover { background: var(--accent-gold); color: #ffffff; }
+
+/* Container Views */
+.view-container {
+  display: none;
+  max-width: 1300px;
+  margin: 30px auto;
+  padding: 0 20px;
+}
+.view-container.active { display: block; }
+
+/* Cover / Intro Screen */
+.cover-card {
+  background: #ffffff;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--card-shadow);
+  padding: 45px;
+  border-top: 6px solid var(--accent-gold);
+  max-width: 850px;
+  margin: 30px auto;
+}
+
+.cover-header {
+  text-align: center;
+  margin-bottom: 30px;
+  border-bottom: 2px solid #f1f5f9;
+  padding-bottom: 25px;
+}
+
+.cover-institution {
+  color: var(--accent-gold);
+  font-weight: 700;
+  font-size: 1.05rem;
+  letter-spacing: 0.5px;
+  margin-bottom: 8px;
+}
+
+.cover-main-title {
+  font-size: 2.2rem;
+  font-weight: 900;
+  color: var(--primary-navy);
+  margin-bottom: 12px;
+}
+
+.cover-desc {
+  color: #64748b;
+  font-size: 1.05rem;
+  line-height: 1.6;
+}
+
+.notice-box {
+  background: #f8fafc;
+  border-left: 4px solid var(--primary-blue);
+  border-radius: var(--radius-sm);
+  padding: 20px 24px;
+  margin-bottom: 30px;
+}
+
+.notice-box h3 {
+  font-size: 1.05rem;
+  color: var(--primary-navy);
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.notice-list {
+  list-style: none;
+}
+
+.notice-list li {
+  position: relative;
+  padding-left: 24px;
+  margin-bottom: 8px;
+  font-size: 0.95rem;
+  color: #334155;
+}
+
+.notice-list li::before {
+  content: "✔";
+  position: absolute;
+  left: 0;
+  color: var(--accent-teal);
+  font-weight: bold;
+}
+
+.student-info-form {
+  background: #ffffff;
+  border: 1.5px solid var(--border-light);
+  border-radius: var(--radius-md);
+  padding: 28px;
+  margin-bottom: 25px;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-group label {
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--primary-navy);
+}
+
+.form-control {
+  padding: 12px 16px;
+  border: 1.5px solid var(--border-light);
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: border-color 0.2s;
+}
+
+.form-control:focus {
+  outline: none;
+  border-color: var(--primary-blue);
+  box-shadow: 0 0 0 3px rgba(30, 58, 138, 0.1);
+}
+
+.btn-start-test {
+  width: 100%;
+  padding: 16px;
+  background: linear-gradient(135deg, var(--primary-navy) 0%, var(--primary-blue) 100%);
+  color: #ffffff;
+  border: none;
+  border-radius: var(--radius-md);
+  font-size: 1.2rem;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 8px 20px rgba(30, 58, 138, 0.25);
+  transition: all 0.2s ease;
+}
+
+.btn-start-test:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 25px rgba(30, 58, 138, 0.35);
+}
+
+/* Viewport Fixed No-Scroll Test Screen Layout */
+.no-scroll-view {
+  height: calc(100vh - 90px) !important;
+  overflow: hidden !important;
+  margin: 10px auto !important;
+}
+
+.test-layout-compact {
+  display: grid;
+  grid-template-columns: 1fr 300px;
+  gap: 15px;
+  height: 100%;
+}
+
+.test-main-card-compact {
+  background: #ffffff;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--card-shadow);
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
+
+.test-header-compact {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 10px;
+  border-bottom: 1.5px solid #f1f5f9;
+  margin-bottom: 10px;
+  height: 40px;
+}
+
+.page-indicator-compact { font-size: 0.95rem; font-weight: 700; color: var(--primary-navy); }
+
+.progress-bar-outer-compact {
+  flex: 1;
+  max-width: 220px;
+  height: 8px;
+  background: #e2e8f0;
+  border-radius: 8px;
+  overflow: hidden;
+  margin: 0 15px;
+}
+
+.progress-bar-inner {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent-gold), var(--accent-teal));
+  width: 0%;
+  transition: width 0.2s;
+}
+
+.answered-tag-compact {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--accent-teal);
+  background: #f0fdf4;
+  padding: 4px 10px;
+  border-radius: 12px;
+  border: 1px solid #bbf7d0;
+}
+
+.btn-temp-save {
+  background: #fef3c7;
+  color: #92400e;
+  border: 1px solid #fde68a;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+  margin-left: 10px;
+}
+
+.question-list-compact {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 4px;
+  overflow: hidden;
+}
+
+.q-row-compact {
+  background: #f8fafc;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 6px;
+  padding: 6px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transition: all 0.15s;
+  height: calc((100% - 36px) / 10);
+  min-height: 38px;
+}
+
+.q-row-compact.unanswered-alert {
+  border-color: var(--accent-red);
+  background: #fef2f2;
+}
+
+.q-left-compact {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+  overflow: hidden;
+  padding-right: 15px;
+}
+
+.q-num-pill {
+  background: var(--primary-navy);
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 0.75rem;
+  padding: 2px 7px;
+  border-radius: 10px;
+  white-space: nowrap;
+}
+
+.q-left-compact {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+  min-width: 0;
+  padding-right: 12px;
+}
+
+.q-num-pill {
+  background: var(--primary-navy);
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 0.8rem;
+  padding: 3px 8px;
+  border-radius: 8px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.q-text-compact {
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: #0f172a;
+  white-space: normal !important;
+  word-break: keep-all;
+  line-height: 1.38;
+}
+
+.q-row-compact {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 7px 12px;
+  min-height: 48px;
+  border-bottom: 1px solid #f1f5f9;
+  transition: background 0.15s;
+}
+
+.options-row-compact { display: flex; gap: 5px; flex-shrink: 0; }
+
+.chip-compact {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3px 8px;
+  background: #ffffff;
+  border: 1px solid var(--border-light);
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+.chip-compact:hover { border-color: var(--primary-blue); background: #eff6ff; }
+.chip-compact.selected { border-color: var(--primary-blue); background: var(--primary-blue); color: #ffffff; }
+
+.test-footer-compact {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 10px;
+  padding-top: 8px;
+  border-top: 1.5px solid #f1f5f9;
+  height: 40px;
+}
+
+.btn-nav-compact {
+  padding: 8px 18px;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+  border: none;
+}
+.btn-nav-prev { background: #e2e8f0; color: #475569; }
+.btn-nav-next { background: var(--primary-navy); color: #ffffff; }
+.btn-submit-test { background: linear-gradient(135deg, #10b981, #059669); color: #ffffff; }
+
+.test-sidebar-compact {
+  background: #ffffff;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--card-shadow);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
+
+.sidebar-title-compact {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--primary-navy);
+  padding-bottom: 8px;
+  border-bottom: 1.5px solid #f1f5f9;
+  margin-bottom: 10px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.status-grid-compact {
+  display: grid;
+  grid-template-columns: repeat(10, 1fr);
+  gap: 3px;
+  flex: 1;
+  align-content: start;
+}
+
+.status-cell {
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.68rem;
+  font-weight: 600;
+  border-radius: 3px;
+  background: #f1f5f9;
+  color: #94a3b8;
+  border: 1px solid #e2e8f0;
+  cursor: pointer;
+}
+.status-cell.answered { background: #dcfce7; color: #15803d; border-color: #86efac; }
+.status-cell.current-page { border: 2px solid var(--primary-blue); font-weight: 800; }
+
+/* Modals */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(15, 23, 42, 0.75);
+  backdrop-filter: blur(5px);
+  z-index: 1000;
+  justify-content: center;
+  align-items: center;
+}
+.modal-overlay.active { display: flex; }
+.modal-card {
+  background: #ffffff;
+  border-radius: var(--radius-lg);
+  padding: 28px;
+  width: 100%;
+  max-width: 500px;
+  box-shadow: 0 25px 50px rgba(0,0,0,0.25);
+  border-top: 5px solid var(--accent-gold);
+}
+
+/* Director Dashboard & Student List with Delete Button */
+.director-dash-grid {
+  display: grid;
+  grid-template-columns: 310px 1fr 320px;
+  gap: 15px;
+}
+
+.student-list-sidebar {
+  background: #ffffff;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--card-shadow);
+  padding: 16px;
+}
+
+.student-records-container {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 620px;
+  overflow-y: auto;
+}
+
+.student-record-item {
+  background: #f8fafc;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 10px 12px;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.15s;
+}
+
+.student-record-item:hover { border-color: var(--primary-blue); }
+.student-record-item.selected { border-color: var(--accent-gold); background: #fffbeb; }
+
+.record-delete-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: #fee2e2;
+  color: #dc2626;
+  border: 1px solid #fca5a5;
+  border-radius: 4px;
+  padding: 2px 6px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+.record-delete-btn:hover { background: #dc2626; color: #ffffff; }
+
+.record-status-tag { display: inline-block; font-size: 0.75rem; padding: 2px 8px; border-radius: 12px; font-weight: 700; margin-top: 4px; }
+.record-status-tag.pending { background: #fef3c7; color: #b45309; border: 1px solid #fde68a; }
+.record-status-tag.stage-confirmed { background: #e0f2fe; color: #0369a1; border: 1px solid #bae6fd; }
+.record-status-tag.confirmed { background: #dcfce7; color: #15803d; border: 1px solid #86efac; }
+
+.dash-card {
+  background: #ffffff;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--card-shadow);
+  padding: 20px;
+}
+
+.major-scores-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+.major-score-card {
+  background: #f8fafc;
+  border: 2px solid #e2e8f0;
+  border-radius: var(--radius-md);
+  padding: 14px;
+}
+.major-score-card.top-recommended { border-color: var(--accent-gold); background: #fffbeb; }
+
+.sub-score-item {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.8rem;
+  padding: 3px 6px;
+  background: #ffffff;
+  border-radius: 4px;
+  border: 1px solid #f1f5f9;
+  margin-top: 3px;
+}
+
+.director-confirm-box {
+  background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%);
+  color: #ffffff;
+  border-radius: var(--radius-lg);
+  padding: 20px;
+}
+
+.select-control {
+  width: 100%;
+  padding: 8px;
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.95);
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--primary-navy);
+  margin-top: 3px;
+  margin-bottom: 10px;
+}
+
+.btn-confirm-save {
+  width: 100%;
+  padding: 10px;
+  background: #10b981;
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  font-weight: 700;
+  cursor: pointer;
+  margin-bottom: 8px;
+}
+
+.btn-generate-report {
+  width: 100%;
+  padding: 12px;
+  background: linear-gradient(135deg, #d97706, #b45309);
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+/* ---------------------------------------------------- */
+/* A4 PORTRAIT (종양식 세로 방향) SLIDE REPORT LAYOUT */
+/* ---------------------------------------------------- */
+
+.report-ppt-deck {
+  display: flex;
+  flex-direction: column;
+  gap: 35px;
+  max-width: 850px;
+  margin: 0 auto 40px auto;
+}
+
+/* Portrait Card Container matching A4 Ratio (Exact 1cm Border Inset & No-Overlap Layout) */
+.ppt-slide-portrait {
+  background: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 16px 40px rgba(30, 58, 138, 0.14);
+  padding: 15mm 16mm;
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1 / 1.414;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+/* User's Exact Royal Navy Floral Corner Border Frame Overlay (1cm Inset Margin from Paper Edges) */
+.ppt-slide-portrait::before {
+  content: '';
+  position: absolute;
+  top: 10mm;
+  left: 10mm;
+  right: 10mm;
+  bottom: 10mm;
+  background-image: url('royal_border.png');
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  pointer-events: none;
+  z-index: 5;
+}
+
+/* Top Header Bar on Every Page */
+.portrait-header-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #f8fafc;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 10px 18px;
+  font-size: 0.9rem;
+  color: #334155;
+  margin-bottom: 16px;
+  flex-shrink: 0;
+}
+
+.portrait-header-bar .hdr-val {
+  color: var(--primary-navy);
+  font-weight: 700;
+}
+
+.portrait-header-bar .hdr-gold {
+  color: var(--accent-gold);
+  font-weight: 800;
+}
+
+/* Body & HTML Text Wrapper Box */
+.portrait-body-wrapper {
+  flex: 1;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+}
+
+.portrait-img-wrapper {
+  flex: 1;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  background: #ffffff;
+  border: 1px solid #f1f5f9;
+  border-radius: 6px;
+}
+
+.portrait-html-wrapper {
+  flex: 1;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 16px 20px;
+  background: #ffffff;
+  box-sizing: border-box;
+  gap: 20px;
+}
+
+.ppt-html-cover-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-around;
+  gap: 25px;
+  text-align: center;
+  padding: 30px 10px;
+}
+
+.ppt-main-header-tag {
+  font-size: 1.65rem;
+  font-weight: 800;
+  color: var(--accent-gold);
+  letter-spacing: 4px;
+}
+
+.ppt-main-title-box {
+  border-top: 4px solid var(--accent-gold);
+  border-bottom: 4px solid var(--accent-gold);
+  padding: 22px 55px;
+  background: #ffffff;
+}
+
+.ppt-main-title-text {
+  font-size: 3.6rem;
+  font-weight: 900;
+  color: var(--primary-navy);
+  letter-spacing: -1px;
+}
+
+.ppt-cover-type-name {
+  font-size: 1.75rem;
+  font-weight: 900;
+  color: var(--primary-blue);
+  background: #fef3c7;
+  padding: 10px 32px;
+  border-radius: 30px;
+  border: 1.5px solid var(--accent-gold);
+  display: inline-block;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+}
+
+.ppt-cover-meta-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px 40px;
+  background: #ffffff;
+  border: 1.5px solid var(--border-light);
+  border-radius: 12px;
+  padding: 22px 35px;
+  text-align: left;
+  font-size: 1.05rem;
+  color: #334155;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.06);
+  width: 92%;
+  margin-top: 35mm;
+}
+
+/* Slide 2 (Strengths & Stagnation) */
+.ppt-slide-2-header {
+  text-align: center;
+  margin-bottom: 18px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid #f1f5f9;
+}
+
+.ppt-slide-2-title {
+  font-size: 2.55rem;
+  font-weight: 900;
+  color: #b45309;
+  margin-bottom: 10px;
+  letter-spacing: -0.5px;
+}
+
+.ppt-slide-2-summary {
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: #0f172a;
+  background-color: #fef08a;
+  display: inline-block;
+  padding: 10px 24px;
+  border-radius: 8px;
+  line-height: 1.5;
+  text-align: center;
+  max-width: 96%;
+  word-break: keep-all;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+}
+
+.ppt-slide-2-body {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  gap: 22px;
+  flex: 1;
+}
+
+.ppt-section-box {
+  text-align: center;
+  background: #f8fafc;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 20px 24px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+}
+
+.ppt-section-tag {
+  font-size: 1.32rem;
+  font-weight: 800;
+  color: #b45309;
+  margin-bottom: 12px;
+  display: inline-block;
+  background: #fef08a;
+  padding: 4px 18px;
+  border-radius: 4px;
+}
+
+.ppt-stagnation-box {
+  text-align: center !important;
+  display: flex;
+  flex-direction: column;
+  align-items: center !important;
+}
+
+.ppt-stagnation-group {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center !important;
+  text-align: center !important;
+  gap: 8px;
+  width: 100%;
+  margin-top: 10px;
+}
+
+.ppt-stagnation-group li {
+  font-size: 1.20rem;
+  font-weight: 700;
+  color: #1e293b;
+  line-height: 1.55;
+  text-align: center !important;
+  width: 100%;
+}
+
+.ppt-stagnation-group li.highlight-yellow {
+  background-color: #fef08a;
+  padding: 4px 16px;
+  border-radius: 6px;
+  font-weight: 800;
+  display: inline-block;
+  text-align: center !important;
+  margin: 4px 0;
+  width: auto;
+}
+
+.ppt-bullet-group {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  text-align: left;
+}
+
+.ppt-bullet-group li {
+  font-size: 1.22rem;
+  font-weight: 700;
+  color: #1e293b;
+  line-height: 1.55;
+}
+
+.ppt-bullet-group li.highlight-yellow {
+  background-color: #fef08a;
+  padding: 4px 12px;
+  border-radius: 4px;
+  font-weight: 800;
+  width: 100%;
+}
+
+.ppt-bullet-group li.highlight-blue {
+  color: #1d4ed8;
+  font-weight: 900;
+  font-size: 1.32rem;
+}
+
+/* Slide 3 (Prescription, 3 Strategies, One-line Summary) */
+.ppt-slide-3-top {
+  flex: 0.60;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  min-height: 0;
+}
+
+.ppt-danger-col {
+  background: #fff5f5;
+  border: 2px solid #fca5a5;
+  border-radius: 12px;
+  padding: 16px 14px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(220, 38, 38, 0.04);
+}
+
+.ppt-danger-heading {
+  font-size: 1.30rem;
+  font-weight: 900;
+  color: #dc2626;
+  line-height: 1.35;
+  white-space: pre-line;
+  margin-bottom: 8px;
+}
+
+.ppt-danger-footer {
+  color: #7f1d1d;
+  font-size: 1.05rem;
+  font-weight: 800;
+  line-height: 1.35;
+  white-space: pre-line;
+  border-top: 1px dashed #fca5a5;
+  padding-top: 8px;
+  margin-top: 8px;
+  text-align: center;
+}
+
+.ppt-strategies-col {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 10px;
+  height: 100%;
+}
+
+.ppt-strat-block {
+  background: #f0fdf4;
+  border: 1.5px solid #86efac;
+  border-radius: 10px;
+  padding: 12px 14px;
+  box-shadow: 0 4px 10px rgba(13, 148, 136, 0.04);
+}
+
+.ppt-strat-head {
+  font-size: 1.20rem;
+  font-weight: 800;
+  color: #0d9488;
+  white-space: pre-line;
+  margin-bottom: 4px;
+}
+
+.ppt-strat-body {
+  font-size: 1.08rem;
+  font-weight: 600;
+  color: #1e293b;
+  white-space: pre-line;
+  padding-left: 4px;
+}
+
+.ppt-one-line-footer {
+  flex: 0.38;
+  min-height: 0;
+  background: #fffbeb;
+  border: 2.5px solid var(--accent-gold);
+  border-radius: 14px;
+  padding: 18px 24px;
+  margin-top: 12px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  box-shadow: 0 6px 15px rgba(217, 119, 6, 0.08);
+}
+
+.ppt-one-line-tag {
+  font-size: 1.32rem;
+  font-weight: 900;
+  color: #b45309;
+  margin-bottom: 8px;
+}
+
+.ppt-one-line-main {
+  font-size: 1.26rem;
+  font-weight: 800;
+  color: var(--primary-navy);
+  line-height: 1.65;
+  white-space: pre-wrap;
+  text-align: center;
+}
+
+.ppt-one-line-highlight {
+  color: #1d4ed8 !important;
+  font-weight: 900 !important;
+  font-size: 1.22rem !important;
+  line-height: 1.5 !important;
+  white-space: pre-wrap !important;
+  text-align: center !important;
+  margin-top: 10px;
+}
+
+.btn-quick-report {
+  width: 100%;
+  padding: 8px 10px;
+  background: #ffffff;
+  border: 1.5px solid var(--border-light);
+  border-radius: 6px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--primary-navy);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  text-align: center;
+}
+
+.btn-quick-report:hover {
+  background: var(--accent-gold);
+  color: #ffffff;
+  border-color: var(--accent-gold);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(217, 119, 6, 0.2);
+}
+
+/* Zero-Cropping Slide Image */
+.ppt-slide-img-contain {
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  display: block;
+  margin: auto;
+}
+
+/* Cover Info Overlay for Slide 1 */
+.cover-info-overlay {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 88%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  z-index: 10;
+}
+
+.cover-overlay-type {
+  font-size: 1.35rem;
+  font-weight: 900;
+  color: var(--primary-blue);
+  background: #fef3c7;
+  padding: 6px 20px;
+  border-radius: 25px;
+  border: 1.5px solid var(--accent-gold);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.12);
+  text-align: center;
+}
+
+.cover-overlay-details {
+  display: flex;
+  justify-content: space-around;
+  background: rgba(255, 255, 255, 0.96);
+  border: 1.5px solid var(--accent-gold);
+  border-radius: 8px;
+  padding: 10px 18px;
+  font-size: 0.88rem;
+  color: #334155;
+  width: 100%;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  backdrop-filter: blur(4px);
+}
+
+/* ---------------------------------------------------- */
+/* PRINT MEDIA: EXACT A4 PORTRAIT (세로 3페이지) OUTPUT  */
+/* ---------------------------------------------------- */
+@media print {
+  @page {
+    size: 210mm 297mm; /* Standard A4 Portrait */
+    margin: 0mm !important; /* Zero margin - card padding handles margins */
+  }
+
+  *, *::before, *::after {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    color-adjust: exact !important;
+    box-sizing: border-box !important;
+  }
+
+  html, body {
+    width: 210mm !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: #ffffff !important;
+    font-size: 13.5px !important;
+  }
+
+  /* Hide non-printable interface */
+  .app-navbar, .report-action-bar, .director-auth-card, .btn-nav-compact, button {
+    display: none !important;
+  }
+
+  /* Show Report Container */
+  #reportView {
+    display: block !important;
+    width: 210mm !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  .view-container {
+    max-width: 210mm !important;
+    width: 210mm !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  .report-ppt-deck {
+    width: 210mm !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    gap: 0 !important;
+    display: block !important;
+  }
+
+  /* Exact A4 Print Card for both Major Category & Sub-Type PPTs */
+  .major-report-card, .ppt-slide-portrait {
+    width: 210mm !important;
+    height: 297mm !important;
+    min-height: 297mm !important;
+    max-height: 297mm !important;
+    margin: 0 !important;
+    padding: 12mm 15mm 20mm 15mm !important;
+    box-shadow: none !important;
+    border: none !important;
+    border-radius: 0 !important;
+    page-break-after: always !important;
+    break-after: page !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+    position: relative !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: space-between !important;
+    overflow: hidden !important;
+  }
+
+  .major-report-card::before, .ppt-slide-portrait::before {
+    content: '' !important;
+    position: absolute !important;
+    top: 6mm !important;
+    left: 6mm !important;
+    right: 6mm !important;
+    bottom: 6mm !important;
+    background-image: url('royal_border.png') !important;
+    background-size: 100% 100% !important;
+    background-repeat: no-repeat !important;
+    pointer-events: none !important;
+    z-index: 5 !important;
+  }
+}
+
+
+/* ==========================================================================
+   PREMIUM 4-PAGE MAJOR CATEGORY COMPREHENSIVE DIAGNOSTIC REPORT STYLES
+   ========================================================================== */
+.major-report-card {
+  background: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 16px 40px rgba(30, 58, 138, 0.14);
+  padding: 12mm 15mm 20mm 15mm; /* Enhanced Bottom Margin (20mm) */
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1 / 1.414;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-sizing: border-box;
+  overflow: hidden;
+  margin-bottom: 30px;
+}
+
+.major-report-card::before {
+  content: '';
+  position: absolute;
+  top: 8mm;
+  left: 8mm;
+  right: 8mm;
+  bottom: 8mm;
+  background-image: url('royal_border.png');
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  pointer-events: none;
+  z-index: 5;
+}
+
+.major-page-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 12px;
+  z-index: 1;
+  padding: 4px 6px;
+}
+
+.major-hdr-badge {
+  display: inline-block;
+  font-size: 0.85rem;
+  font-weight: 900;
+  letter-spacing: 2px;
+  color: #b45309;
+  text-transform: uppercase;
+  margin-bottom: 2px;
+}
+
+.major-title-block {
+  text-align: center;
+  border-bottom: 2.5px solid #0f2942;
+  padding-bottom: 8px;
+  margin-bottom: 4px;
+}
+
+.major-main-title {
+  font-size: 1.85rem;
+  font-weight: 900;
+  color: #0f2942;
+  letter-spacing: -0.5px;
+  margin-bottom: 4px;
+}
+
+.major-sub-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #64748b;
+}
+
+.major-insight-box {
+  background: #f8fafc;
+  border-left: 5px solid #0284c7;
+  border-radius: 6px;
+  padding: 10px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 1.02rem;
+  line-height: 1.5;
+}
+
+.major-insight-box strong {
+  color: #0f172a;
+}
+
+.major-sec-title {
+  font-size: 1.15rem;
+  font-weight: 900;
+  color: #0f2942;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+  margin-top: 2px;
+}
+
+.major-sec-title::before {
+  content: '■';
+  color: #0284c7;
+  font-size: 0.95rem;
+}
+
+.major-subtypes-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.major-subtypes-grid.grid-4 {
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+}
+
+.major-subtype-item {
+  background: #ffffff;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 6px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+}
+
+.major-subtype-name {
+  font-size: 1.02rem;
+  font-weight: 900;
+  color: #0369a1;
+  border-bottom: 1.5px solid #e0f2fe;
+  padding-bottom: 4px;
+}
+
+.major-subtype-text {
+  font-size: 0.90rem;
+  line-height: 1.45;
+  color: #334155;
+}
+
+.major-subtype-text b {
+  color: #0f172a;
+}
+
+.major-metrics-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+
+.major-metric-card {
+  background: #f8fafc;
+  border: 1.5px solid #cbd5e1;
+  border-radius: 8px;
+  padding: 8px 10px;
+  text-align: center;
+}
+
+.major-metric-name {
+  font-size: 0.88rem;
+  font-weight: 800;
+  color: #475569;
+}
+
+.major-metric-score {
+  font-size: 1.55rem;
+  font-weight: 900;
+  color: #0284c7;
+  margin: 2px 0;
+}
+
+.major-metric-desc {
+  font-size: 0.78rem;
+  color: #64748b;
+  line-height: 1.3;
+}
+
+.major-bottom-banner {
+  background: #ffffff !important;
+  border: 2px solid #0284c7;
+  border-radius: 10px;
+  padding: 12px 18px !important; /* 위아래 12px 동일 여백 */
+  min-height: 52px;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+  align-items: center !important;
+  text-align: center !important;
+  font-size: 1.02rem;
+  font-weight: 800;
+  line-height: 1.5;
+  white-space: pre-line;
+  color: #0f2942 !important;
+  margin-top: 6px;
+  margin-bottom: 6px;
+  box-sizing: border-box;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+/* Page 2 Tables & Step Cards */
+.major-steps-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.major-step-card {
+  background: #fef2f2;
+  border: 1.5px solid #fca5a5;
+  border-radius: 8px;
+  padding: 10px 12px;
+}
+
+.major-step-title {
+  font-size: 0.95rem;
+  font-weight: 900;
+  color: #b91c1c;
+  margin-bottom: 4px;
+}
+
+.major-step-desc {
+  font-size: 0.88rem;
+  color: #450a0a;
+  line-height: 1.45;
+}
+
+.major-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 4px 0;
+  font-size: 0.90rem;
+}
+
+.major-table th {
+  background: #0f2942;
+  color: #ffffff;
+  padding: 8px 10px;
+  font-weight: 800;
+  text-align: center;
+  border: 1px solid #0f2942;
+}
+
+.major-table td {
+  padding: 8px 10px;
+  border: 1px solid #cbd5e1;
+  line-height: 1.45;
+  color: #1e293b;
+  vertical-align: middle;
+}
+
+.major-table tr:nth-child(even) td {
+  background: #f8fafc;
+}
+
+.major-warning-banner {
+  background: #ffffff !important;
+  border: 2px solid #f43f5e;
+  border-radius: 10px;
+  padding: 12px 16px !important; /* 위아래 12px 동일 여백 */
+  min-height: 52px;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+  align-items: center !important;
+  text-align: center !important;
+  color: #b91c1c !important;
+  font-size: 0.98rem;
+  font-weight: 800;
+  line-height: 1.5;
+  white-space: pre-line;
+  margin-top: 6px;
+  margin-bottom: 6px;
+  box-sizing: border-box;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+/* Page 3 Action Protocol Cards & Checklist */
+.major-rules-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.major-rule-box {
+  background: #f0fdf4;
+  border: 1.5px solid #86efac;
+  border-radius: 8px;
+  padding: 10px 12px;
+}
+
+.major-rule-num {
+  font-size: 1.05rem;
+  font-weight: 900;
+  color: #15803d;
+  margin-bottom: 4px;
+}
+
+.major-rule-desc {
+  font-size: 0.88rem;
+  color: #14532d;
+  line-height: 1.45;
+}
+
+.major-chk-list {
+  background: #f8fafc;
+  border: 1.5px solid #cbd5e1;
+  border-radius: 8px;
+  padding: 12px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.major-chk-item {
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: #1e293b;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.major-chk-item::before {
+  content: '☑';
+  color: #0284c7;
+  font-size: 1.05rem;
+}
+
+/* Page 4 Home Coaching & Role Models */
+.major-shift-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 6px;
+}
+
+.major-shift-bad {
+  background: #fff1f2;
+  border-left: 4px solid #f43f5e;
+  border-radius: 6px;
+  padding: 8px 12px;
+  font-size: 0.90rem;
+  color: #9f1239;
+  font-weight: 700;
+}
+
+.major-shift-good {
+  background: #f0fdf4;
+  border-left: 4px solid #22c55e;
+  border-radius: 6px;
+  padding: 8px 12px;
+  font-size: 0.90rem;
+  color: #15803d;
+  font-weight: 800;
+}
+
+.major-heroes-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.major-hero-card {
+  background: #fffbeb;
+  border: 1.5px solid #fde68a;
+  border-radius: 8px;
+  padding: 10px 12px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 4px;
+}
+
+.major-hero-name {
+  font-size: 1.05rem;
+  font-weight: 900;
+  color: #b45309;
+}
+
+.major-hero-role {
+  font-size: 0.80rem;
+  font-weight: 700;
+  color: #78350f;
+}
+
+.major-hero-quote {
+  font-size: 0.86rem;
+  font-style: italic;
+  color: #1e293b;
+  line-height: 1.4;
+  margin: 4px 0;
+}
+
+.major-hero-lesson {
+  font-size: 0.80rem;
+  font-weight: 800;
+  color: #0369a1;
+  line-height: 1.35;
+  border-top: 1px dashed #fcd34d;
+  padding-top: 4px;
+}
+
+/* ============================================================
+   STUDENT PERSONAL REPORT CARD (학생별 개인 진단 리포트)
+   ============================================================ */
+
+/* 학생 리포트 버튼 (대시보드 학생 목록) */
+.btn-student-report {
+  display: inline-block;
+  background: linear-gradient(135deg, #7c3aed, #5b21b6);
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  padding: 5px 10px;
+  font-size: 0.78rem;
+  font-weight: 800;
+  cursor: pointer;
+  margin-top: 6px;
+  transition: opacity 0.15s;
+}
+.btn-student-report:hover { opacity: 0.85; }
+
+/* 학생 리포트 카드 (A4 세로) */
+.student-report-card {
+  background: #ffffff;
+  width: 210mm;
+  min-height: 297mm;
+  max-height: 297mm;
+  margin: 0 auto 30px auto;
+  padding: 12mm 14mm 14mm 14mm;
+  box-sizing: border-box;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  box-shadow: 0 16px 40px rgba(30,58,138,0.14);
+  overflow: hidden;
+  page-break-after: always;
+}
+
+/* 리포트 상단 헤더 */
+.srp-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 3px solid #0f172a;
+  padding-bottom: 8px;
+  margin-bottom: 4px;
+}
+.srp-header-title {
+  font-size: 1.15rem;
+  font-weight: 900;
+  color: #0f172a;
+  letter-spacing: -0.5px;
+}
+.srp-header-sub {
+  font-size: 0.82rem;
+  color: #64748b;
+  font-weight: 600;
+}
+.srp-header-inst {
+  font-size: 0.80rem;
+  color: #64748b;
+  text-align: right;
+}
+
+/* 학생 기본 정보 행 */
+.srp-info-row {
+  display: flex;
+  gap: 0;
+  background: #f8fafc;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 8px;
+  overflow: hidden;
+}
+.srp-info-cell {
+  flex: 1;
+  padding: 8px 14px;
+  border-right: 1px solid #e2e8f0;
+}
+.srp-info-cell:last-child { border-right: none; }
+.srp-info-label {
+  font-size: 0.72rem;
+  color: #94a3b8;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.srp-info-value {
+  font-size: 1.05rem;
+  font-weight: 900;
+  color: #0f172a;
+  margin-top: 2px;
+}
+
+/* 대표유형 + 신뢰도 행 */
+.srp-type-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.srp-type-box {
+  border: 2px solid;
+  border-radius: 10px;
+  padding: 10px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.srp-box-label {
+  font-size: 0.75rem;
+  font-weight: 800;
+  color: #64748b;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+.srp-type-name {
+  font-size: 1.6rem;
+  font-weight: 900;
+  letter-spacing: -1px;
+}
+.srp-type-sub {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #475569;
+}
+.srp-reliability-stars {
+  font-size: 1.3rem;
+  margin: 2px 0;
+}
+.srp-reliability-value {
+  font-size: 1.5rem;
+  font-weight: 900;
+  color: #0f172a;
+}
+.srp-reliability-label {
+  font-size: 0.82rem;
+  color: #64748b;
+  font-weight: 600;
+}
+
+/* 점수 분포 막대 */
+.srp-scores-section { }
+.srp-sec-title {
+  font-size: 0.88rem;
+  font-weight: 900;
+  color: #0f172a;
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.srp-sec-title::before { content: '■'; color: #0284c7; font-size: 0.75rem; }
+.srp-score-bar-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 5px;
+}
+.srp-score-bar-label {
+  width: 50px;
+  font-size: 0.82rem;
+  font-weight: 800;
+  color: #0f172a;
+  flex-shrink: 0;
+}
+.srp-score-bar-track {
+  flex: 1;
+  height: 16px;
+  background: #e2e8f0;
+  border-radius: 8px;
+  overflow: hidden;
+}
+.srp-score-bar-fill {
+  height: 100%;
+  border-radius: 8px;
+  transition: width 0.3s;
+}
+.srp-score-bar-num {
+  width: 36px;
+  font-size: 0.82rem;
+  font-weight: 800;
+  color: #0f172a;
+  text-align: right;
+  flex-shrink: 0;
+}
+
+/* 핵심 특징 섹션 */
+.srp-traits-box {
+  background: #f8fafc;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 10px 14px;
+}
+.srp-trait-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 0.90rem;
+  line-height: 1.5;
+  color: #1e293b;
+  margin-bottom: 4px;
+}
+.srp-trait-item:last-child { margin-bottom: 0; }
+.srp-trait-bullet {
+  color: #0284c7;
+  font-weight: 900;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+/* 복합 성향 섹션 */
+.srp-blend-box {
+  border-left: 5px solid #7c3aed;
+  background: #faf5ff;
+  border-radius: 0 8px 8px 0;
+  padding: 10px 14px;
+}
+.srp-blend-text {
+  font-size: 0.92rem;
+  line-height: 1.65;
+  color: #1e293b;
+  white-space: pre-line;
+}
+
+/* 코칭 방향 섹션 */
+.srp-coaching-box {
+  border: 2px solid;
+  border-radius: 10px;
+  padding: 10px 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 48px;
+}
+.srp-coaching-icon { font-size: 1.5rem; flex-shrink: 0; }
+.srp-coaching-text {
+  font-size: 0.90rem;
+  font-weight: 700;
+  line-height: 1.55;
+  color: #0f172a;
+  white-space: pre-line;
+}
+
+/* 푸터 */
+.srp-footer {
+  margin-top: auto;
+  border-top: 1.5px solid #e2e8f0;
+  padding-top: 6px;
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.72rem;
+  color: #94a3b8;
+}
+
+/* Print rules for student report */
+@media print {
+  .student-report-card {
+    width: 210mm !important;
+    min-height: 297mm !important;
+    max-height: 297mm !important;
+    margin: 0 !important;
+    padding: 12mm 14mm 14mm 14mm !important;
+    box-shadow: none !important;
+    page-break-after: always !important;
+  }
+}

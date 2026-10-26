@@ -1,0 +1,1077 @@
+/* ---------------------------------------------------- */
+/* GALAXY TAB A7 LITE (SM-T220 / SM-T225) DEDICATED STYLESHEET */
+/* Optimized for 8.7" Display (800x1340) & Finger Touch UX */
+/* ---------------------------------------------------- */
+
+:root {
+  --primary-navy: #0f172a;
+  --primary-blue: #1d4ed8;
+  --accent-gold: #d97706;
+  --bg-slate: #f8fafc;
+  --text-dark: #1e293b;
+  --border-light: #cbd5e1;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 18px;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  background-color: #f1f5f9;
+  color: var(--text-dark);
+  line-height: 1.5;
+  overflow-x: hidden;
+  font-size: 16px;
+}
+
+/* Tablet Navbar (Large Touch Friendly) */
+.tab-navbar {
+  background: var(--primary-navy);
+  color: #ffffff;
+  padding: 12px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  z-index: 200;
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.15);
+}
+
+.tab-nav-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.tab-logo-badge {
+  background: var(--accent-gold);
+  color: #ffffff;
+  font-weight: 900;
+  font-size: 0.9rem;
+  padding: 6px 12px;
+  border-radius: 6px;
+  letter-spacing: 1px;
+}
+
+.tab-nav-title {
+  font-size: 1.15rem;
+  font-weight: 800;
+}
+
+.tab-nav-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.btn-tab-nav {
+  min-height: 44px;
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-weight: 800;
+  font-size: 0.88rem;
+  border: none;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  transition: transform 0.1s ease, background 0.15s ease;
+}
+
+.btn-tab-nav:active {
+  transform: scale(0.96);
+}
+
+.btn-tab-pc {
+  background: #38bdf8;
+  color: #0f172a;
+}
+
+.btn-tab-gold {
+  background: var(--accent-gold);
+  color: #ffffff;
+}
+
+/* View Containers */
+.tab-view {
+  display: none;
+  padding: 16px;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.tab-view.active {
+  display: block;
+}
+
+/* Cover / Start Screen Card */
+.tab-cover-card {
+  background: #ffffff;
+  border-radius: var(--radius-lg);
+  padding: 24px 20px;
+  box-shadow: 0 10px 30px rgba(15, 23, 42, 0.08);
+  border: 1.5px solid #e2e8f0;
+}
+
+.tab-cover-header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.tab-cover-header h2 {
+  font-size: 1.8rem;
+  font-weight: 900;
+  color: var(--primary-navy);
+  margin-bottom: 6px;
+}
+
+.tab-notice-box {
+  background: #fffbeb;
+  border: 1.5px solid #fde68a;
+  border-radius: var(--radius-md);
+  padding: 16px;
+  margin-bottom: 20px;
+}
+
+.tab-notice-box h3 {
+  color: #b45309;
+  font-size: 1.05rem;
+  font-weight: 800;
+  margin-bottom: 8px;
+}
+
+.tab-notice-list {
+  padding-left: 20px;
+  font-size: 0.95rem;
+  color: #78350f;
+  line-height: 1.6;
+}
+
+/* Student Form for Tablet */
+.tab-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+@media (max-width: 600px) {
+  .tab-form-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.tab-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.tab-form-group label {
+  font-weight: 800;
+  font-size: 0.95rem;
+  color: var(--primary-navy);
+}
+
+.tab-form-control {
+  min-height: 50px;
+  padding: 10px 16px;
+  font-size: 1.05rem;
+  border: 2px solid var(--border-light);
+  border-radius: 10px;
+  outline: none;
+  font-weight: 700;
+  background: #ffffff;
+}
+
+.tab-form-control:focus {
+  border-color: var(--primary-blue);
+  background: #f0f6ff;
+}
+
+/* Big Start Button */
+.btn-tab-start {
+  width: 100%;
+  min-height: 60px;
+  background: linear-gradient(135deg, var(--primary-blue), #1e3a8a);
+  color: #ffffff;
+  font-size: 1.3rem;
+  font-weight: 900;
+  border: none;
+  border-radius: 14px;
+  cursor: pointer;
+  box-shadow: 0 8px 20px rgba(29, 78, 216, 0.3);
+  margin-top: 15px;
+}
+
+.btn-tab-start:active {
+  transform: scale(0.98);
+}
+
+/* Questionnaire View (Touch No-Scroll Fixed Layout) */
+.tab-test-card {
+  background: #ffffff;
+  border-radius: var(--radius-lg);
+  padding: 16px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 90px);
+}
+
+.tab-test-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 12px;
+  border-bottom: 2px solid #f1f5f9;
+  margin-bottom: 12px;
+}
+
+.tab-page-tag {
+  font-weight: 900;
+  font-size: 1.1rem;
+  color: var(--primary-navy);
+}
+
+.tab-progress-bar {
+  flex: 1;
+  height: 14px;
+  background: #e2e8f0;
+  border-radius: 10px;
+  margin: 0 16px;
+  overflow: hidden;
+}
+
+.tab-progress-inner {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, #10b981, #059669);
+  transition: width 0.25s ease;
+}
+
+.tab-answered-tag {
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: var(--primary-blue);
+  background: #e0f2fe;
+  padding: 6px 12px;
+  border-radius: 20px;
+}
+
+/* Question List Container (Scrollable Touch Rows) */
+.tab-question-list {
+  flex: 1;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-right: 4px;
+}
+
+.tab-q-row {
+  background: #f8fafc;
+  border: 2px solid #e2e8f0;
+  border-radius: var(--radius-md);
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.tab-q-row.unanswered-alert {
+  border-color: #ef4444 !important;
+  background: #fef2f2 !important;
+}
+
+.tab-q-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.tab-q-num {
+  background: var(--primary-navy);
+  color: #ffffff;
+  font-weight: 900;
+  font-size: 0.9rem;
+  padding: 4px 10px;
+  border-radius: 6px;
+  white-space: nowrap;
+}
+
+.tab-q-text {
+  font-size: 1.12rem;
+  font-weight: 800;
+  color: var(--primary-navy);
+  line-height: 1.45;
+}
+
+/* Touch Rating Chips (1 ~ 5 Scale) */
+.tab-options-row {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 6px;
+}
+
+.tab-chip {
+  min-height: 52px;
+  background: #ffffff;
+  border: 2px solid #cbd5e1;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 0.92rem;
+  color: #475569;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.15s ease;
+}
+
+.tab-chip:active {
+  transform: scale(0.95);
+}
+
+.tab-chip.selected {
+  background: var(--primary-blue);
+  color: #ffffff;
+  border-color: #1e40af;
+  box-shadow: 0 4px 12px rgba(29, 78, 216, 0.3);
+}
+
+/* Footer Bottom Touch Action Buttons */
+.tab-test-footer {
+  display: flex;
+  gap: 12px;
+  padding-top: 12px;
+  border-top: 2px solid #f1f5f9;
+  margin-top: 10px;
+}
+
+.btn-tab-footer {
+  min-height: 56px;
+  font-size: 1.15rem;
+  font-weight: 900;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  padding: 0 20px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-tab-prev {
+  background: #e2e8f0;
+  color: #334155;
+}
+
+.btn-tab-next {
+  background: var(--primary-blue);
+  color: #ffffff;
+  flex: 1;
+}
+
+.btn-tab-submit {
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: #ffffff;
+  flex: 1;
+}
+
+/* Director Dashboard Tablet Layout */
+.tab-dash-grid {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 14px;
+}
+
+@media (max-width: 768px) {
+  .tab-dash-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+/* ==========================================================================
+   PREMIUM 4-PAGE MAJOR CATEGORY COMPREHENSIVE DIAGNOSTIC REPORT STYLES
+   ========================================================================== */
+.major-report-card {
+  background: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 16px 40px rgba(30, 58, 138, 0.14);
+  padding: 12mm 15mm 20mm 15mm; /* Enhanced Bottom Margin (20mm) */
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1 / 1.414;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-sizing: border-box;
+  overflow: hidden;
+  margin-bottom: 30px;
+}
+
+.major-report-card::before {
+  content: '';
+  position: absolute;
+  top: 8mm;
+  left: 8mm;
+  right: 8mm;
+  bottom: 8mm;
+  background-image: url('royal_border.png');
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  pointer-events: none;
+  z-index: 5;
+}
+
+.major-page-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 12px;
+  z-index: 1;
+  padding: 4px 6px;
+}
+
+.major-hdr-badge {
+  display: inline-block;
+  font-size: 0.85rem;
+  font-weight: 900;
+  letter-spacing: 2px;
+  color: #b45309;
+  text-transform: uppercase;
+  margin-bottom: 2px;
+}
+
+.major-title-block {
+  text-align: center;
+  border-bottom: 2.5px solid #0f2942;
+  padding-bottom: 8px;
+  margin-bottom: 4px;
+}
+
+.major-main-title {
+  font-size: 1.85rem;
+  font-weight: 900;
+  color: #0f2942;
+  letter-spacing: -0.5px;
+  margin-bottom: 4px;
+}
+
+.major-sub-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #64748b;
+}
+
+.major-insight-box {
+  background: #f8fafc;
+  border-left: 5px solid #0284c7;
+  border-radius: 6px;
+  padding: 10px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 1.02rem;
+  line-height: 1.5;
+}
+
+.major-insight-box strong {
+  color: #0f172a;
+}
+
+.major-sec-title {
+  font-size: 1.15rem;
+  font-weight: 900;
+  color: #0f2942;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+  margin-top: 2px;
+}
+
+.major-sec-title::before {
+  content: '■';
+  color: #0284c7;
+  font-size: 0.95rem;
+}
+
+.major-subtypes-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.major-subtypes-grid.grid-4 {
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+}
+
+.major-subtype-item {
+  background: #ffffff;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 6px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+}
+
+.major-subtype-name {
+  font-size: 1.02rem;
+  font-weight: 900;
+  color: #0369a1;
+  border-bottom: 1.5px solid #e0f2fe;
+  padding-bottom: 4px;
+}
+
+.major-subtype-text {
+  font-size: 0.90rem;
+  line-height: 1.45;
+  color: #334155;
+}
+
+.major-subtype-text b {
+  color: #0f172a;
+}
+
+.major-metrics-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+
+.major-metric-card {
+  background: #f8fafc;
+  border: 1.5px solid #cbd5e1;
+  border-radius: 8px;
+  padding: 8px 10px;
+  text-align: center;
+}
+
+.major-metric-name {
+  font-size: 0.88rem;
+  font-weight: 800;
+  color: #475569;
+}
+
+.major-metric-score {
+  font-size: 1.55rem;
+  font-weight: 900;
+  color: #0284c7;
+  margin: 2px 0;
+}
+
+.major-metric-desc {
+  font-size: 0.78rem;
+  color: #64748b;
+  line-height: 1.3;
+}
+
+.major-bottom-banner {
+  background: #ffffff !important;
+  border: 2px solid #0284c7;
+  border-radius: 10px;
+  padding: 12px 18px !important; /* 위아래 12px 동일 여백 */
+  min-height: 52px;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+  align-items: center !important;
+  text-align: center !important;
+  font-size: 1.02rem;
+  font-weight: 800;
+  line-height: 1.5;
+  white-space: pre-line;
+  color: #0f2942 !important;
+  margin-top: 6px;
+  margin-bottom: 6px;
+  box-sizing: border-box;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+/* Page 2 Tables & Step Cards */
+.major-steps-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.major-step-card {
+  background: #fef2f2;
+  border: 1.5px solid #fca5a5;
+  border-radius: 8px;
+  padding: 10px 12px;
+}
+
+.major-step-title {
+  font-size: 0.95rem;
+  font-weight: 900;
+  color: #b91c1c;
+  margin-bottom: 4px;
+}
+
+.major-step-desc {
+  font-size: 0.88rem;
+  color: #450a0a;
+  line-height: 1.45;
+}
+
+.major-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 4px 0;
+  font-size: 0.90rem;
+}
+
+.major-table th {
+  background: #0f2942;
+  color: #ffffff;
+  padding: 8px 10px;
+  font-weight: 800;
+  text-align: center;
+  border: 1px solid #0f2942;
+}
+
+.major-table td {
+  padding: 8px 10px;
+  border: 1px solid #cbd5e1;
+  line-height: 1.45;
+  color: #1e293b;
+  vertical-align: middle;
+}
+
+.major-table tr:nth-child(even) td {
+  background: #f8fafc;
+}
+
+.major-warning-banner {
+  background: #ffffff !important;
+  border: 2px solid #f43f5e;
+  border-radius: 10px;
+  padding: 12px 16px !important; /* 위아래 12px 동일 여백 */
+  min-height: 52px;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+  align-items: center !important;
+  text-align: center !important;
+  color: #b91c1c !important;
+  font-size: 0.98rem;
+  font-weight: 800;
+  line-height: 1.5;
+  white-space: pre-line;
+  margin-top: 6px;
+  margin-bottom: 6px;
+  box-sizing: border-box;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+/* Page 3 Action Protocol Cards & Checklist */
+.major-rules-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.major-rule-box {
+  background: #f0fdf4;
+  border: 1.5px solid #86efac;
+  border-radius: 8px;
+  padding: 10px 12px;
+}
+
+.major-rule-num {
+  font-size: 1.05rem;
+  font-weight: 900;
+  color: #15803d;
+  margin-bottom: 4px;
+}
+
+.major-rule-desc {
+  font-size: 0.88rem;
+  color: #14532d;
+  line-height: 1.45;
+}
+
+.major-chk-list {
+  background: #f8fafc;
+  border: 1.5px solid #cbd5e1;
+  border-radius: 8px;
+  padding: 12px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.major-chk-item {
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: #1e293b;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.major-chk-item::before {
+  content: '☑';
+  color: #0284c7;
+  font-size: 1.05rem;
+}
+
+/* Page 4 Home Coaching & Role Models */
+.major-shift-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 6px;
+}
+
+.major-shift-bad {
+  background: #fff1f2;
+  border-left: 4px solid #f43f5e;
+  border-radius: 6px;
+  padding: 8px 12px;
+  font-size: 0.90rem;
+  color: #9f1239;
+  font-weight: 700;
+}
+
+.major-shift-good {
+  background: #f0fdf4;
+  border-left: 4px solid #22c55e;
+  border-radius: 6px;
+  padding: 8px 12px;
+  font-size: 0.90rem;
+  color: #15803d;
+  font-weight: 800;
+}
+
+.major-heroes-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.major-hero-card {
+  background: #fffbeb;
+  border: 1.5px solid #fde68a;
+  border-radius: 8px;
+  padding: 10px 12px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 4px;
+}
+
+.major-hero-name {
+  font-size: 1.05rem;
+  font-weight: 900;
+  color: #b45309;
+}
+
+.major-hero-role {
+  font-size: 0.80rem;
+  font-weight: 700;
+  color: #78350f;
+}
+
+.major-hero-quote {
+  font-size: 0.86rem;
+  font-style: italic;
+  color: #1e293b;
+  line-height: 1.4;
+  margin: 4px 0;
+}
+
+.major-hero-lesson {
+  font-size: 0.80rem;
+  font-weight: 800;
+  color: #0369a1;
+  line-height: 1.35;
+  border-top: 1px dashed #fcd34d;
+  padding-top: 4px;
+}
+
+/* ============================================================
+   STUDENT PERSONAL REPORT CARD (학생별 개인 진단 리포트)
+   ============================================================ */
+
+/* 학생 리포트 버튼 (대시보드 학생 목록) */
+.btn-student-report {
+  display: inline-block;
+  background: linear-gradient(135deg, #7c3aed, #5b21b6);
+  color: #ffffff;
+  border: none;
+  border-radius: 6px;
+  padding: 5px 10px;
+  font-size: 0.78rem;
+  font-weight: 800;
+  cursor: pointer;
+  margin-top: 6px;
+  transition: opacity 0.15s;
+}
+.btn-student-report:hover { opacity: 0.85; }
+
+/* 학생 리포트 카드 (A4 세로) */
+.student-report-card {
+  background: #ffffff;
+  width: 210mm;
+  min-height: 297mm;
+  max-height: 297mm;
+  margin: 0 auto 30px auto;
+  padding: 12mm 14mm 14mm 14mm;
+  box-sizing: border-box;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  box-shadow: 0 16px 40px rgba(30,58,138,0.14);
+  overflow: hidden;
+  page-break-after: always;
+}
+
+/* 리포트 상단 헤더 */
+.srp-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 3px solid #0f172a;
+  padding-bottom: 8px;
+  margin-bottom: 4px;
+}
+.srp-header-title {
+  font-size: 1.15rem;
+  font-weight: 900;
+  color: #0f172a;
+  letter-spacing: -0.5px;
+}
+.srp-header-sub {
+  font-size: 0.82rem;
+  color: #64748b;
+  font-weight: 600;
+}
+.srp-header-inst {
+  font-size: 0.80rem;
+  color: #64748b;
+  text-align: right;
+}
+
+/* 학생 기본 정보 행 */
+.srp-info-row {
+  display: flex;
+  gap: 0;
+  background: #f8fafc;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 8px;
+  overflow: hidden;
+}
+.srp-info-cell {
+  flex: 1;
+  padding: 8px 14px;
+  border-right: 1px solid #e2e8f0;
+}
+.srp-info-cell:last-child { border-right: none; }
+.srp-info-label {
+  font-size: 0.72rem;
+  color: #94a3b8;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.srp-info-value {
+  font-size: 1.05rem;
+  font-weight: 900;
+  color: #0f172a;
+  margin-top: 2px;
+}
+
+/* 대표유형 + 신뢰도 행 */
+.srp-type-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.srp-type-box {
+  border: 2px solid;
+  border-radius: 10px;
+  padding: 10px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.srp-box-label {
+  font-size: 0.75rem;
+  font-weight: 800;
+  color: #64748b;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+.srp-type-name {
+  font-size: 1.6rem;
+  font-weight: 900;
+  letter-spacing: -1px;
+}
+.srp-type-sub {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #475569;
+}
+.srp-reliability-stars {
+  font-size: 1.3rem;
+  margin: 2px 0;
+}
+.srp-reliability-value {
+  font-size: 1.5rem;
+  font-weight: 900;
+  color: #0f172a;
+}
+.srp-reliability-label {
+  font-size: 0.82rem;
+  color: #64748b;
+  font-weight: 600;
+}
+
+/* 점수 분포 막대 */
+.srp-scores-section { }
+.srp-sec-title {
+  font-size: 0.88rem;
+  font-weight: 900;
+  color: #0f172a;
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.srp-sec-title::before { content: '■'; color: #0284c7; font-size: 0.75rem; }
+.srp-score-bar-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 5px;
+}
+.srp-score-bar-label {
+  width: 50px;
+  font-size: 0.82rem;
+  font-weight: 800;
+  color: #0f172a;
+  flex-shrink: 0;
+}
+.srp-score-bar-track {
+  flex: 1;
+  height: 16px;
+  background: #e2e8f0;
+  border-radius: 8px;
+  overflow: hidden;
+}
+.srp-score-bar-fill {
+  height: 100%;
+  border-radius: 8px;
+  transition: width 0.3s;
+}
+.srp-score-bar-num {
+  width: 36px;
+  font-size: 0.82rem;
+  font-weight: 800;
+  color: #0f172a;
+  text-align: right;
+  flex-shrink: 0;
+}
+
+/* 핵심 특징 섹션 */
+.srp-traits-box {
+  background: #f8fafc;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 10px 14px;
+}
+.srp-trait-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 0.90rem;
+  line-height: 1.5;
+  color: #1e293b;
+  margin-bottom: 4px;
+}
+.srp-trait-item:last-child { margin-bottom: 0; }
+.srp-trait-bullet {
+  color: #0284c7;
+  font-weight: 900;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+/* 복합 성향 섹션 */
+.srp-blend-box {
+  border-left: 5px solid #7c3aed;
+  background: #faf5ff;
+  border-radius: 0 8px 8px 0;
+  padding: 10px 14px;
+}
+.srp-blend-text {
+  font-size: 0.92rem;
+  line-height: 1.65;
+  color: #1e293b;
+  white-space: pre-line;
+}
+
+/* 코칭 방향 섹션 */
+.srp-coaching-box {
+  border: 2px solid;
+  border-radius: 10px;
+  padding: 10px 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 48px;
+}
+.srp-coaching-icon { font-size: 1.5rem; flex-shrink: 0; }
+.srp-coaching-text {
+  font-size: 0.90rem;
+  font-weight: 700;
+  line-height: 1.55;
+  color: #0f172a;
+  white-space: pre-line;
+}
+
+/* 푸터 */
+.srp-footer {
+  margin-top: auto;
+  border-top: 1.5px solid #e2e8f0;
+  padding-top: 6px;
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.72rem;
+  color: #94a3b8;
+}
+
+/* Print rules for student report */
+@media print {
+  .student-report-card {
+    width: 210mm !important;
+    min-height: 297mm !important;
+    max-height: 297mm !important;
+    margin: 0 !important;
+    padding: 12mm 14mm 14mm 14mm !important;
+    box-shadow: none !important;
+    page-break-after: always !important;
+  }
+}
