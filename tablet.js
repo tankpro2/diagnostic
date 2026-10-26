@@ -950,6 +950,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Pre-seed initial sample records if localStorage is empty or Choi Cheol is missing (Ensures direct file:/// opening shows 최철 data immediately)
   function initSeedDataIfEmpty() {
+    return; // Disabled sample seed in online version
     let records = getStoredRecords();
     const hasChoi = records.some(r => r.student && r.student.name === '최철');
 
