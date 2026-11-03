@@ -8,6 +8,8 @@
   const SUPABASE_KEY = 'sb_publishable_r6f09vNvaFxTVwN2rYzGHA_GXyJTfp5';
   const TABLE_ENDPOINT = `${SUPABASE_URL}/rest/v1/diagnostic_records`;
 
+  let isDirectorMode = false;
+
   function createStatusUI() {
     if (document.getElementById('supabaseStatusBanner')) return;
 
@@ -15,10 +17,10 @@
     bar.id = 'supabaseStatusBanner';
     bar.style.cssText = [
       'position: fixed',
-      'bottom: 14px',
+      'bottom: 42px',
       'right: 14px',
       'z-index: 9999',
-      'display: flex',
+      'display: ' + (isDirectorMode ? 'flex' : 'none'),
       'align-items: center',
       'gap: 8px',
       'background: #0f172a',
@@ -50,6 +52,14 @@
     });
   }
 
+  function setDirectorMode(enabled) {
+    isDirectorMode = !!enabled;
+    const bar = document.getElementById('supabaseStatusBanner');
+    if (bar) {
+      bar.style.display = isDirectorMode ? 'flex' : 'none';
+    }
+  }
+
   function updateStatusUI(state, message) {
     createStatusUI();
     const dot = document.getElementById('sbStatusDot');
@@ -70,6 +80,21 @@
   }
 
   function toRowPayload(rec) {
+    if (rec.recordType === 'APPLICATION' || String(rec.id).startsWith('APP_')) {
+      return {
+        id: String(rec.id),
+        student_name: (rec.student && rec.student.name) ? String(rec.student.name) : '',
+        student_school: (rec.student && rec.student.school) ? String(rec.student.school) : '',
+        student_grade: (rec.student && rec.student.grade) ? String(rec.student.grade) : '',
+        course_type: rec.courseType || '',
+        status: rec.status || '',
+        confirmed_major: rec.accessKey || '',
+        confirmed_sub: rec.phone || '',
+        submitted_at: rec.requestedAt || '',
+        record_data: { ...rec, recordType: 'APPLICATION' },
+        updated_at: new Date().toISOString()
+      };
+    }
     return {
       id: String(rec.id),
       student_name: (rec.student && rec.student.name) ? String(rec.student.name) : '',
@@ -104,21 +129,25 @@
       }
 
       const rows = await res.json();
-      const cloudRecords = rows
+      const allItems = rows
         .map(r => r.record_data)
         .filter(r => r && r.id);
 
+      const cloudRecords = allItems.filter(r => r.recordType !== 'APPLICATION' && !String(r.id).startsWith('APP_'));
+      const cloudApps = allItems.filter(r => r.recordType === 'APPLICATION' || String(r.id).startsWith('APP_'));
+
       // Overwrite localStorage strictly with Supabase DB records
       localStorage.setItem('DIAGNOSTIC_RECORDS', JSON.stringify(cloudRecords));
+      localStorage.setItem('DIAGNOSTIC_APPLICATIONS', JSON.stringify(cloudApps));
 
-      updateStatusUI('ok', `Supabase 연동됨 (${cloudRecords.length}건)`);
+      updateStatusUI('ok', `Supabase 연동됨 (검사 ${cloudRecords.length}건 / 신청 ${cloudApps.length}건)`);
 
       if (typeof window.onSupabaseRecordsSynced === 'function') {
-        window.onSupabaseRecordsSynced(cloudRecords);
+        window.onSupabaseRecordsSynced(cloudRecords, cloudApps);
       }
 
       if (showToast) {
-        console.log(`[SupabaseSync] 동기화 완료 (총 ${cloudRecords.length}건)`);
+        console.log(`[SupabaseSync] 동기화 완료 (검사 ${cloudRecords.length}건, 신청 ${cloudApps.length}건)`);
       }
     } catch (err) {
       console.error('[SupabaseSync] pullRecords error:', err);
@@ -148,10 +177,39 @@
       }
 
       if (refreshAfter) {
-        updateStatusUI('ok', `Supabase 연동됨 (${records.length}건)`);
+        updateStatusUI('ok', `Supabase 연동됨`);
       }
     } catch (err) {
       console.error('[SupabaseSync] pushRecords error:', err);
+    }
+  }
+
+  async function pushApplications(apps, refreshAfter = true) {
+    if (!Array.isArray(apps) || apps.length === 0) return;
+    const payload = apps.filter(a => a && a.id).map(a => toRowPayload({ ...a, recordType: 'APPLICATION' }));
+    if (payload.length === 0) return;
+
+    try {
+      const res = await fetch(`${TABLE_ENDPOINT}?on_conflict=id`, {
+        method: 'POST',
+        headers: {
+          'apikey': SUPABASE_KEY,
+          'Content-Type': 'application/json',
+          'Prefer': 'resolution=merge-duplicates,return=minimal'
+        },
+        body: JSON.stringify(payload)
+      });
+
+      if (!res.ok) {
+        updateStatusUI('error', `신청 저장 실패 (${res.status})`);
+        return;
+      }
+
+      if (refreshAfter) {
+        await pullRecords(false);
+      }
+    } catch (err) {
+      console.error('[SupabaseSync] pushApplications error:', err);
     }
   }
 
@@ -176,7 +234,9 @@
   window.SupabaseSync = {
     pullRecords,
     pushRecords,
-    deleteRecord
+    pushApplications,
+    deleteRecord,
+    setDirectorMode
   };
 
   if (document.readyState === 'loading') {

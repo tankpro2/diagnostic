@@ -218,9 +218,9 @@ body {
 
 /* Viewport Fixed No-Scroll Test Screen Layout */
 .no-scroll-view {
-  height: calc(100vh - 90px) !important;
+  height: calc(100vh - 150px) !important;
   overflow: hidden !important;
-  margin: 10px auto !important;
+  margin: 8px auto !important;
 }
 
 .test-layout-compact {
@@ -1846,7 +1846,7 @@ body {
   color: #94a3b8;
 }
 
-/* Print rules for student report */
+/* Print rules for student report & anti-print security for questionnaire */
 @media print {
   .student-report-card {
     width: 210mm !important;
@@ -1856,5 +1856,108 @@ body {
     padding: 12mm 14mm 14mm 14mm !important;
     box-shadow: none !important;
     page-break-after: always !important;
+  }
+  #introView,
+  #coverView,
+  #testView,
+  #completeView {
+    display: none !important;
+    visibility: hidden !important;
+  }
+}
+
+/* ============================================================================
+   Survey Content Anti-Copy, Anti-Drag & Anti-Screen-Capture Security Styles
+   ============================================================================ */
+body,
+#introView,
+#coverView,
+#testView,
+#completeView,
+.q-row-compact,
+.q-text-compact,
+.chip-compact {
+  -webkit-user-select: none !important;
+  -moz-user-select: none !important;
+  -ms-user-select: none !important;
+  user-select: none !important;
+  -webkit-touch-callout: none !important;
+  -webkit-user-drag: none !important;
+}
+
+input,
+textarea,
+select {
+  -webkit-user-select: text !important;
+  -moz-user-select: text !important;
+  -ms-user-select: text !important;
+  user-select: text !important;
+}
+
+/* Screen Capture & Focus-Loss Blur Shield on Test View */
+#testView.security-blur-shield .test-layout-compact {
+  filter: blur(22px) brightness(0.25) !important;
+  pointer-events: none !important;
+  transition: filter 0.05s ease !important;
+}
+
+#securityCaptureOverlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  background: rgba(15, 23, 42, 0.92);
+  color: #ffffff;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 24px;
+  cursor: pointer;
+}
+
+#securityCaptureOverlay.active {
+  display: flex !important;
+}
+
+/* Top & Bottom Red Copyright Legal Warning Bars */
+body {
+  padding-bottom: 36px;
+}
+
+.copyright-warning-bar {
+  width: 100%;
+  background: linear-gradient(90deg, #7f1d1d 0%, #dc2626 50%, #7f1d1d 100%);
+  color: #ffffff;
+  text-align: center;
+  padding: 6px 14px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: -0.2px;
+  line-height: 1.4;
+  z-index: 9000;
+  box-shadow: 0 2px 8px rgba(127, 29, 29, 0.35);
+}
+
+.copyright-warning-bar strong {
+  color: #fef08a;
+  font-weight: 900;
+}
+
+.copyright-bar-bottom {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  border-top: 1.5px solid #fca5a5;
+}
+
+.copyright-bar-top {
+  border-bottom: 1.5px solid #fca5a5;
+}
+
+@media print {
+  .copyright-warning-bar {
+    display: none !important;
   }
 }

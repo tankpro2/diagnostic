@@ -32,6 +32,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const inputName = document.getElementById('inputName');
   const btnStartTest = document.getElementById('btnStartTest');
 
+  const introView = document.getElementById('introView');
   const coverView = document.getElementById('coverView');
   const testView = document.getElementById('testView');
   const completeView = document.getElementById('completeView');
@@ -95,8 +96,15 @@ document.addEventListener('DOMContentLoaded', () => {
   const pptStrategiesCol = document.getElementById('pptStrategiesCol');
   const pptOneLineText = document.getElementById('pptOneLineText');
 
+
+
   const btnBackToDashboard = document.getElementById('btnBackToDashboard');
+  const btnBackToDashboardTop = document.getElementById('btnBackToDashboardTop');
+  const btnDownloadPdf = document.getElementById('btnDownloadPdf');
+  const btnDownloadPdfTop = document.getElementById('btnDownloadPdfTop');
   const btnPrintReport = document.getElementById('btnPrintReport');
+  const btnPrintReportTop = document.getElementById('btnPrintReportTop');
+  let currentReportPdfFilename = '브레인하이브_진단리포트.pdf';
 
   // Set Default Date to Today
   const todayStr = new Date().toISOString().split('T')[0];
@@ -107,23 +115,29 @@ document.addEventListener('DOMContentLoaded', () => {
   const btnDashboardToHome = document.getElementById('btnDashboardToHome');
   if (btnDashboardToHome) {
     btnDashboardToHome.addEventListener('click', () => {
-      showView(coverView);
+      exitAuthKeySession();
+      showView(introView || coverView);
     });
   }
 
   const btnNavHome = document.getElementById('btnNavHome');
   if (btnNavHome) {
     btnNavHome.addEventListener('click', () => {
-      showView(coverView);
+      exitAuthKeySession();
+      showView(introView || coverView);
     });
   }
 
   // View Switcher
   function showView(targetView) {
-    [coverView, testView, completeView, dashboardView, reportView].forEach(v => {
+    [introView, coverView, testView, completeView, dashboardView, reportView].forEach(v => {
       if (v) v.classList.remove('active');
     });
     if (targetView) targetView.classList.add('active');
+    if (window.SupabaseSync && typeof window.SupabaseSync.setDirectorMode === 'function') {
+      const isDir = (targetView === dashboardView || targetView === reportView);
+      window.SupabaseSync.setDirectorMode(isDir);
+    }
     window.scrollTo(0, 0);
   }
 
@@ -195,7 +209,684 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
+  // ============================================================================
+  // Online Application & Access Key Issuance System
+  // ============================================================================
+  function getStoredApplications() {
+    try {
+      const apps = localStorage.getItem('DIAGNOSTIC_APPLICATIONS');
+      return apps ? JSON.parse(apps) : [];
+    } catch (e) { return []; }
+  }
+
+  function saveStoredApplications(apps) {
+    localStorage.setItem('DIAGNOSTIC_APPLICATIONS', JSON.stringify(apps));
+    if (window.SupabaseSync && typeof window.SupabaseSync.pushApplications === 'function') {
+      window.SupabaseSync.pushApplications(apps);
+    }
+  }
+
+  function generateAccessKey() {
+    const chars = '23456789ABCDEFGHJKLMNPQRSTUVWXYZ';
+    const existing = new Set(getStoredApplications().map(a => (a.accessKey || '').toUpperCase()));
+    let key = '';
+    do {
+      let code = '';
+      for (let i = 0; i < 6; i++) {
+        code += chars.charAt(Math.floor(Math.random() * chars.length));
+      }
+      key = `BH-${code}`;
+    } while (existing.has(key));
+    return key;
+  }
+
+  function copyKeyInvitationMessage(app) {
+    const courseName = app.courseType === 'COMBINED_140' ? '140문항 통합 진단' : '기본진단 (1단계 ➔ 2단계)';
+    const msg = `[유주코칭&컨설팅] 브레인하이브 학습가치 유형검사 접속 키 안내\n` +
+      `- 학생 성명: ${app.student.name} (${app.student.school} ${app.student.grade})\n` +
+      `- 검사 과정: ${courseName}\n` +
+      `- 접속 키(Key): ${app.accessKey}\n\n` +
+      `온라인 첫 화면 오른쪽 [발급받은 검사 키 입력]란에 학생 성명과 접속 키를 입력하시면 검사가 시작됩니다.`;
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(msg).catch(() => {});
+    }
+    return msg;
+  }
+
+  function updateApplicationStatusForStudent(studentName, newStatus) {
+    if (!studentName) return;
+    const apps = getStoredApplications();
+    let changed = false;
+    apps.forEach(a => {
+      if ((state.activeAuthAppId && a.id === state.activeAuthAppId) ||
+          (a.student && a.student.name && a.student.name.trim() === studentName.trim() && a.accessKey)) {
+        a.status = newStatus;
+        changed = true;
+      }
+    });
+    if (changed) {
+      saveStoredApplications(apps);
+    }
+  }
+
+  function exitAuthKeySession() {
+    state.activeAuthAppId = null;
+    try { sessionStorage.removeItem('ACTIVE_AUTH_KEY_SESSION'); } catch (e) {}
+    if (inputName) inputName.readOnly = false;
+    if (inputSchool) inputSchool.readOnly = false;
+    if (inputGrade) inputGrade.readOnly = false;
+    const radios = document.querySelectorAll('input[name="courseType"]');
+    radios.forEach(r => { r.disabled = false; });
+    if (selectStage1Student) {
+      selectStage1Student.style.display = 'block';
+      const lbl = stage1StudentSelectContainer ? stage1StudentSelectContainer.querySelector('label') : null;
+      if (lbl) lbl.style.display = 'block';
+    }
+  }
+
+  function enterCoverViewWithAuthKey(app, targetCourse, existingStage1Rec) {
+    state.activeAuthAppId = app.id;
+    state.student = {
+      date: todayStr,
+      name: app.student.name,
+      school: app.student.school,
+      grade: app.student.grade
+    };
+
+    if (inputDate) inputDate.value = todayStr;
+    if (inputName) { inputName.value = app.student.name || ''; inputName.readOnly = true; }
+    if (inputSchool) { inputSchool.value = app.student.school || ''; inputSchool.readOnly = true; }
+    if (inputGrade) { inputGrade.value = app.student.grade || ''; inputGrade.readOnly = true; }
+
+    const authBannerStudentInfo = document.getElementById('authBannerStudentInfo');
+    if (authBannerStudentInfo) {
+      authBannerStudentInfo.textContent = `${app.student.name} (${app.student.school} ${app.student.grade}) | 키: ${app.accessKey}`;
+    }
+
+    const radios = document.querySelectorAll('input[name="courseType"]');
+    radios.forEach(r => {
+      if (r.value === targetCourse) {
+        r.checked = true;
+        r.disabled = false;
+      } else {
+        r.checked = false;
+        r.disabled = true;
+      }
+    });
+
+    if (targetCourse === 'STAGE2_SUB' && existingStage1Rec) {
+      state.selectedRecordId = existingStage1Rec.id;
+      state.stage2Category = existingStage1Rec.confirmedMajor || '안정형';
+      if (stage1StudentSelectContainer) {
+        stage1StudentSelectContainer.style.display = 'block';
+        const lbl = stage1StudentSelectContainer.querySelector('label');
+        if (lbl) lbl.style.display = 'none';
+      }
+      if (selectStage1Student) {
+        selectStage1Student.style.display = 'none';
+        selectStage1Student.innerHTML = '';
+        const opt = document.createElement('option');
+        opt.value = existingStage1Rec.id;
+        opt.dataset.recJson = JSON.stringify(existingStage1Rec);
+        opt.selected = true;
+        selectStage1Student.appendChild(opt);
+      }
+      if (stage1StudentStatusBadge) {
+        stage1StudentStatusBadge.innerHTML = `<span style="color: #15803d; background: #f0fdf4; padding: 6px 12px; border-radius: 6px; border: 1px solid #86efac; display: inline-block;">✅ [${existingStage1Rec.student.name}] 학생의 1단계 대분류가 <strong>[${existingStage1Rec.confirmedMajor || '안정형'}]</strong>(으)로 확정되어 2단계 세부 유형 진단이 준비되었습니다!</span>`;
+      }
+    } else {
+      if (stage1StudentSelectContainer) stage1StudentSelectContainer.style.display = 'none';
+    }
+
+    try {
+      sessionStorage.setItem('ACTIVE_AUTH_KEY_SESSION', JSON.stringify({
+        appId: app.id,
+        accessKey: app.accessKey,
+        studentName: app.student.name
+      }));
+    } catch (e) {}
+
+    showView(coverView);
+  }
+
+  const btnExitAuthSession = document.getElementById('btnExitAuthSession');
+  if (btnExitAuthSession) {
+    btnExitAuthSession.addEventListener('click', () => {
+      exitAuthKeySession();
+      showView(introView || coverView);
+    });
+  }
+
+  // 1) Student / Parent Online Application Submit Handler
+  const btnSubmitKeyRequest = document.getElementById('btnSubmitKeyRequest');
+  if (btnSubmitKeyRequest) {
+    btnSubmitKeyRequest.addEventListener('click', () => {
+      const reqName = document.getElementById('reqStudentName');
+      const reqPhone = document.getElementById('reqStudentPhone');
+      const reqSchool = document.getElementById('reqStudentSchool');
+      const reqGrade = document.getElementById('reqStudentGrade');
+      const reqCourse = document.getElementById('reqCourseType');
+      const reqAgree = document.getElementById('reqPrivacyAgree');
+
+      const name = reqName ? reqName.value.trim() : '';
+      const phone = reqPhone ? reqPhone.value.trim() : '';
+      const school = reqSchool ? reqSchool.value.trim() : '';
+      const grade = reqGrade ? reqGrade.value.trim() : '';
+      const courseType = reqCourse ? reqCourse.value : 'STAGE1_70';
+
+      if (!name || !phone || !school || !grade) {
+        alert('학생 성명, 연락처, 학교명, 학년을 모두 입력해 주세요.');
+        return;
+      }
+      if (reqAgree && !reqAgree.checked) {
+        alert('개인정보 수집·이용 동의에 체크해 주세요.');
+        return;
+      }
+
+      const apps = getStoredApplications();
+      const duplicate = apps.find(a =>
+        a.student && a.student.name.trim() === name &&
+        (a.phone || '').replace(/[^0-9]/g, '') === phone.replace(/[^0-9]/g, '') &&
+        a.status !== '검사 완료 (사용 종료)'
+      );
+
+      if (duplicate) {
+        alert(`이미 [${name}] 학생 명의로 접수된 검사 신청 건이 있습니다.\n(현재 상태: ${duplicate.status})\n\n원장님이 확인 후 입력하신 연락처로 접속 키를 전달해 드립니다.`);
+        return;
+      }
+
+      const timeStr = new Date().toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' });
+      const newApp = {
+        id: `APP_${Date.now()}`,
+        recordType: 'APPLICATION',
+        student: { name, school, grade, date: todayStr },
+        phone,
+        courseType,
+        accessKey: '',
+        status: '키 발급 대기',
+        requestedAt: `${todayStr} ${timeStr}`
+      };
+
+      apps.unshift(newApp);
+      saveStoredApplications(apps);
+
+      if (reqName) reqName.value = '';
+      if (reqPhone) reqPhone.value = '';
+      if (reqSchool) reqSchool.value = '';
+      if (reqGrade) reqGrade.value = '';
+      if (reqAgree) reqAgree.checked = false;
+
+      alert(`✅ [${name}] 학생의 브레인하이브 학습유형 검사 신청이 접수되었습니다!\n\n담당 원장님이 확인 후 입력하신 연락처(${phone})로 전용 접속 키(Key)를 안내해 드립니다.\n전달받은 키를 오른쪽 [발급받은 검사 키 입력]란에 입력해 주세요.`);
+    });
+  }
+
+  // 2) Student Access Key Verification Handler (with 5-Strike Lockout & Stage 1/2 Smart Routing)
+  const btnVerifyAccessKey = document.getElementById('btnVerifyAccessKey');
+  const inputAuthStudentName = document.getElementById('inputAuthStudentName');
+  const inputAuthAccessKey = document.getElementById('inputAuthAccessKey');
+  const authKeyAlertBox = document.getElementById('authKeyAlertBox');
+
+  function showAuthAlert(msg, type = 'error') {
+    if (!authKeyAlertBox) {
+      alert(msg);
+      return;
+    }
+    authKeyAlertBox.style.display = 'block';
+    if (type === 'error') {
+      authKeyAlertBox.style.background = '#fef2f2';
+      authKeyAlertBox.style.color = '#dc2626';
+      authKeyAlertBox.style.border = '1px solid #fecaca';
+    } else if (type === 'warn') {
+      authKeyAlertBox.style.background = '#fffbeb';
+      authKeyAlertBox.style.color = '#b45309';
+      authKeyAlertBox.style.border = '1px solid #fde68a';
+    } else {
+      authKeyAlertBox.style.background = '#f0fdf4';
+      authKeyAlertBox.style.color = '#15803d';
+      authKeyAlertBox.style.border = '1px solid #86efac';
+    }
+    authKeyAlertBox.innerHTML = msg.replace(/\n/g, '<br>');
+  }
+
+  function handleVerifyAccessKey() {
+    // Check Brute-Force Lockout
+    let lockInfo = { count: 0, lockUntil: 0 };
+    try {
+      const raw = localStorage.getItem('AUTH_KEY_LOCKOUT');
+      if (raw) lockInfo = JSON.parse(raw);
+    } catch (e) {}
+
+    if (lockInfo.lockUntil && Date.now() < lockInfo.lockUntil) {
+      const remainSec = Math.ceil((lockInfo.lockUntil - Date.now()) / 1000);
+      showAuthAlert(`⏳ 키 입력 오류가 5회 누적되어 입력이 일시 제한되었습니다.\n${remainSec}초 후에 다시 시도해 주세요.`, 'error');
+      return;
+    }
+
+    const nameStr = inputAuthStudentName ? inputAuthStudentName.value.trim() : '';
+    const keyStr = inputAuthAccessKey ? inputAuthAccessKey.value.trim().toUpperCase() : '';
+
+    if (!nameStr || !keyStr) {
+      showAuthAlert('학생 성명과 발급받은 검사 키(Key)를 모두 입력해 주세요.', 'error');
+      return;
+    }
+
+    const apps = getStoredApplications();
+    const matchedApp = apps.find(a =>
+      a.accessKey &&
+      a.accessKey.trim().toUpperCase() === keyStr &&
+      a.student &&
+      a.student.name.trim() === nameStr
+    );
+
+    if (!matchedApp) {
+      lockInfo.count = (lockInfo.count || 0) + 1;
+      if (lockInfo.count >= 5) {
+        lockInfo.lockUntil = Date.now() + 60 * 1000;
+        lockInfo.count = 0;
+        localStorage.setItem('AUTH_KEY_LOCKOUT', JSON.stringify(lockInfo));
+        showAuthAlert('⏳ 검사 키 5회 연속 불일치로 1분간 입력이 잠겼습니다.\n원장님께 발급받은 키와 학생 성명을 다시 확인해 주세요.', 'error');
+      } else {
+        localStorage.setItem('AUTH_KEY_LOCKOUT', JSON.stringify(lockInfo));
+        showAuthAlert(`학생 성명 또는 검사 키가 일치하지 않습니다. (오류 ${lockInfo.count}/5회)`, 'error');
+      }
+      return;
+    }
+
+    // Reset lockout on valid key match
+    localStorage.removeItem('AUTH_KEY_LOCKOUT');
+    if (authKeyAlertBox) authKeyAlertBox.style.display = 'none';
+
+    // Check student's diagnostic record progress
+    const records = getStoredRecords();
+    const studentRec = records.find(r =>
+      r.student &&
+      r.student.name.trim() === nameStr &&
+      r.student.school.trim() === matchedApp.student.school.trim()
+    ) || records.find(r => r.student && r.student.name.trim() === nameStr);
+
+    if (matchedApp.status === '검사 완료 (사용 종료)' ||
+        (studentRec && (studentRec.courseType === '140문항 통합' || studentRec.courseType === '2단계 완료' || studentRec.status === '2단계 완료 (원장 최종 확정 대기)'))) {
+      showAuthAlert(`✅ [${nameStr}] 학생은 해당 키로 이미 모든 진단 검사를 완료하셨습니다.\n(1회용 접속 키 사용 완료 — 재검사가 필요한 경우 원장님께 문의해 주세요)`, 'warn');
+      return;
+    }
+
+    if (studentRec && studentRec.status === '1단계 완료 (원장 확정 대기)') {
+      showAuthAlert(`🔒 [${nameStr}] 학생의 1단계 대분류 진단이 제출 완료되었으며, 현재 원장님의 대분류 확정 대기 중입니다.\n원장님이 1단계 유형을 확정한 후 동일한 키로 다시 입력하시면 2단계 세부 유형 진단이 시작됩니다.`, 'warn');
+      return;
+    }
+
+    if (studentRec && (studentRec.status === '1단계 확정 완료 (2단계 대기)' || studentRec.status.includes('1단계 확정'))) {
+      enterCoverViewWithAuthKey(matchedApp, 'STAGE2_SUB', studentRec);
+      return;
+    }
+
+    enterCoverViewWithAuthKey(matchedApp, matchedApp.courseType || 'STAGE1_70', null);
+  }
+
+  if (btnVerifyAccessKey) {
+    btnVerifyAccessKey.addEventListener('click', handleVerifyAccessKey);
+  }
+  if (inputAuthAccessKey) {
+    inputAuthAccessKey.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        handleVerifyAccessKey();
+      }
+    });
+  }
+
+  // 3) Director Key Issuance & Application Management UI Renderer
+  const applicationsListContainer = document.getElementById('applicationsListContainer');
+  const keyAppCountBadge = document.getElementById('keyAppCountBadge');
+  const btnIssueDirectKey = document.getElementById('btnIssueDirectKey');
+
+  function renderDirectorApplications() {
+    if (!applicationsListContainer) return;
+    const apps = getStoredApplications();
+    const records = getStoredRecords();
+
+    // Sync application status with actual student diagnostic records if updated
+    apps.forEach(a => {
+      if (!a.accessKey || !a.student) return;
+      const rec = records.find(r => r.student && r.student.name.trim() === a.student.name.trim());
+      if (rec) {
+        if (rec.courseType === '140문항 통합' || rec.courseType === '2단계 완료' || rec.status === '2단계 완료 (원장 최종 확정 대기)' || (rec.status === '확정 완료' && rec.confirmedSub)) {
+          a.status = '검사 완료 (사용 종료)';
+        } else if (rec.status === '1단계 확정 완료 (2단계 대기)') {
+          a.status = '1단계 확정 완료 (2단계 진입 가능)';
+        } else if (rec.status === '1단계 완료 (원장 확정 대기)') {
+          a.status = '1단계 완료 (원장 확정 대기)';
+        }
+      }
+    });
+
+    const pendingCount = apps.filter(a => a.status === '키 발급 대기').length;
+    const activeCount = apps.filter(a => a.accessKey && a.status !== '검사 완료 (사용 종료)').length;
+    if (keyAppCountBadge) {
+      keyAppCountBadge.textContent = `신청 대기 ${pendingCount}건 · 진행중 키 ${activeCount}건`;
+      keyAppCountBadge.style.background = pendingCount > 0 ? '#fef3c7' : '#f1f5f9';
+      keyAppCountBadge.style.color = pendingCount > 0 ? '#b45309' : '#475569';
+    }
+
+    applicationsListContainer.innerHTML = '';
+    if (apps.length === 0) {
+      applicationsListContainer.innerHTML = '<div style="text-align: center; padding: 16px; color: #94a3b8; font-size: 0.85rem;">접수된 온라인 검사 신청 또는 발급된 키 내역이 없습니다.</div>';
+      return;
+    }
+
+    // Sort: '키 발급 대기' first, then newest
+    const sorted = [...apps].sort((a, b) => {
+      const aPend = a.status === '키 발급 대기' ? 0 : 1;
+      const bPend = b.status === '키 발급 대기' ? 0 : 1;
+      if (aPend !== bPend) return aPend - bPend;
+      return String(b.id).localeCompare(String(a.id));
+    });
+
+    sorted.forEach(app => {
+      const row = document.createElement('div');
+      const isPending = app.status === '키 발급 대기';
+      const isDone = app.status === '검사 완료 (사용 종료)';
+      row.style.cssText = `display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; padding: 10px 14px; border-radius: 8px; border: 1.5px solid ${isPending ? '#fbbf24' : '#e2e8f0'}; background: ${isPending ? '#fffbeb' : '#ffffff'};`;
+
+      const courseLabel = app.courseType === 'COMBINED_140' ? '140문항 통합' : '기본진단(1➔2단계)';
+      const statusColor = isPending ? '#b45309' : (isDone ? '#64748b' : '#0369a1');
+      const statusBg = isPending ? '#fef3c7' : (isDone ? '#f1f5f9' : '#e0f2fe');
+
+      row.innerHTML = `
+        <div style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+          <span style="background: ${statusBg}; color: ${statusColor}; font-size: 0.76rem; font-weight: 800; padding: 3px 8px; border-radius: 6px;">${app.status}</span>
+          <strong style="font-size: 0.92rem; color: var(--primary-navy);">${app.student.name}</strong>
+          <span style="font-size: 0.82rem; color: #475569;">(${app.student.school} ${app.student.grade})</span>
+          <span style="font-size: 0.8rem; color: #0d9488; font-weight: 700;">📞 ${app.phone || '연락처 없음'}</span>
+          <span style="font-size: 0.78rem; color: #64748b;">[${courseLabel}] · ${app.requestedAt || ''}</span>
+          ${app.accessKey ? `<span style="background: #0f172a; color: #fef3c7; font-size: 0.82rem; font-weight: 900; padding: 3px 10px; border-radius: 6px; letter-spacing: 1px;">🔑 ${app.accessKey}</span>` : ''}
+        </div>
+        <div style="display: flex; align-items: center; gap: 6px;">
+          ${isPending ? `
+            <select class="app-course-select form-control" style="padding: 4px 8px; font-size: 0.78rem; font-weight: 700; width: auto;">
+              <option value="STAGE1_70" ${app.courseType !== 'COMBINED_140' ? 'selected' : ''}>기본진단</option>
+              <option value="COMBINED_140" ${app.courseType === 'COMBINED_140' ? 'selected' : ''}>140문항 통합</option>
+            </select>
+            <button type="button" class="btn-issue-key btn-nav-compact" style="background: #d97706; color: #ffffff; font-size: 0.78rem; font-weight: 800; padding: 5px 12px; border: none; border-radius: 6px; cursor: pointer;">🔑 키 발급 & 복사</button>
+          ` : `
+            <button type="button" class="btn-copy-key btn-nav-compact" style="background: #e0f2fe; color: #0369a1; font-size: 0.76rem; font-weight: 800; padding: 5px 10px; border: 1px solid #bae6fd; border-radius: 6px; cursor: pointer;">📋 안내문 복사</button>
+            ${isDone ? `<button type="button" class="btn-reset-key btn-nav-compact" style="background: #f0fdf4; color: #15803d; font-size: 0.76rem; font-weight: 800; padding: 5px 10px; border: 1px solid #86efac; border-radius: 6px; cursor: pointer;">🔄 키 재활성화</button>` : ''}
+          `}
+          <button type="button" class="btn-delete-app btn-nav-compact" style="background: #fef2f2; color: #dc2626; font-size: 0.76rem; font-weight: 800; padding: 5px 8px; border: 1px solid #fecaca; border-radius: 6px; cursor: pointer;">🗑️</button>
+        </div>
+      `;
+
+      const btnIssue = row.querySelector('.btn-issue-key');
+      if (btnIssue) {
+        btnIssue.addEventListener('click', () => {
+          const courseSel = row.querySelector('.app-course-select');
+          const allApps = getStoredApplications();
+          const target = allApps.find(x => x.id === app.id);
+          if (target) {
+            target.courseType = courseSel ? courseSel.value : target.courseType;
+            target.accessKey = generateAccessKey();
+            target.status = '키 발급 완료 (검사 전)';
+            saveStoredApplications(allApps);
+            const msg = copyKeyInvitationMessage(target);
+            renderDirectorApplications();
+            alert(`🔑 [${target.student.name}] 학생의 접속 키 [${target.accessKey}]가 발급되었으며, 문자/카톡 발송용 안내 문구가 클립보드에 복사되었습니다!\n\n---\n${msg}`);
+          }
+        });
+      }
+
+      const btnCopy = row.querySelector('.btn-copy-key');
+      if (btnCopy) {
+        btnCopy.addEventListener('click', () => {
+          const msg = copyKeyInvitationMessage(app);
+          alert(`📋 [${app.student.name}] 학생의 접속 키 안내 문구가 복사되었습니다!\n(카톡이나 문자에 붙여넣기 하세요)\n\n---\n${msg}`);
+        });
+      }
+
+      const btnReset = row.querySelector('.btn-reset-key');
+      if (btnReset) {
+        btnReset.addEventListener('click', () => {
+          const allApps = getStoredApplications();
+          const target = allApps.find(x => x.id === app.id);
+          if (target) {
+            target.status = '키 발급 완료 (검사 전)';
+            saveStoredApplications(allApps);
+            renderDirectorApplications();
+            alert(`🔄 [${target.student.name}] 학생의 키(${target.accessKey})가 다시 사용할 수 있도록 재활성화되었습니다.`);
+          }
+        });
+      }
+
+      const btnDel = row.querySelector('.btn-delete-app');
+      if (btnDel) {
+        btnDel.addEventListener('click', () => {
+          if (confirm(`[${app.student.name}] 학생의 신청/키 발급 내역을 삭제하시겠습니까?`)) {
+            let allApps = getStoredApplications();
+            allApps = allApps.filter(x => x.id !== app.id);
+            saveStoredApplications(allApps);
+            if (window.SupabaseSync && typeof window.SupabaseSync.deleteRecord === 'function') {
+              window.SupabaseSync.deleteRecord(app.id);
+            }
+            renderDirectorApplications();
+          }
+        });
+      }
+
+      applicationsListContainer.appendChild(row);
+    });
+  }
+
+  if (btnIssueDirectKey) {
+    btnIssueDirectKey.addEventListener('click', () => {
+      const nameEl = document.getElementById('directKeyName');
+      const schoolEl = document.getElementById('directKeySchool');
+      const gradeEl = document.getElementById('directKeyGrade');
+      const phoneEl = document.getElementById('directKeyPhone');
+      const courseEl = document.getElementById('directKeyCourse');
+
+      const name = nameEl ? nameEl.value.trim() : '';
+      const school = schoolEl ? schoolEl.value.trim() : '';
+      const grade = gradeEl ? gradeEl.value.trim() : '';
+      const phone = phoneEl ? phoneEl.value.trim() : '';
+      const courseType = courseEl ? courseEl.value : 'STAGE1_70';
+
+      if (!name || !school || !grade) {
+        alert('즉시 키 발급을 위해 학생 성명, 학교명, 학년을 입력해 주세요.');
+        return;
+      }
+
+      const timeStr = new Date().toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' });
+      const newKey = generateAccessKey();
+      const newApp = {
+        id: `APP_${Date.now()}`,
+        recordType: 'APPLICATION',
+        student: { name, school, grade, date: todayStr },
+        phone: phone || '원장 직접발급',
+        courseType,
+        accessKey: newKey,
+        status: '키 발급 완료 (검사 전)',
+        requestedAt: `${todayStr} ${timeStr}`
+      };
+
+      const apps = getStoredApplications();
+      apps.unshift(newApp);
+      saveStoredApplications(apps);
+
+      if (nameEl) nameEl.value = '';
+      if (schoolEl) schoolEl.value = '';
+      if (gradeEl) gradeEl.value = '';
+      if (phoneEl) phoneEl.value = '';
+
+      const msg = copyKeyInvitationMessage(newApp);
+      renderDirectorApplications();
+      alert(`🔑 [${name}] 학생용 접속 키 [${newKey}]가 즉시 발급되었으며 안내 문구가 복사되었습니다!\n\n---\n${msg}`);
+    });
+  }
+
+  // Restore active key session if student switched between PC and Tablet screen
+  try {
+    const savedAuth = sessionStorage.getItem('ACTIVE_AUTH_KEY_SESSION');
+    if (savedAuth) {
+      const parsed = JSON.parse(savedAuth);
+      const apps = getStoredApplications();
+      const foundApp = apps.find(a => a.id === parsed.appId || (a.accessKey === parsed.accessKey && a.student && a.student.name === parsed.studentName));
+      if (foundApp && foundApp.status !== '검사 완료 (사용 종료)') {
+        const recs = getStoredRecords();
+        const sRec = recs.find(r => r.student && r.student.name === foundApp.student.name);
+        if (sRec && sRec.status === '1단계 확정 완료 (2단계 대기)') {
+          enterCoverViewWithAuthKey(foundApp, 'STAGE2_SUB', sRec);
+        } else if (!sRec) {
+          enterCoverViewWithAuthKey(foundApp, foundApp.courseType || 'STAGE1_70', null);
+        }
+      }
+    }
+  } catch (e) {}
+
+  // ============================================================================
+  // Survey Content Security: Anti-Drag, Anti-Copy, Anti-RightClick & Anti-Capture
+  // ============================================================================
+  (function initSurveyContentSecurity() {
+    const overlay = document.createElement('div');
+    overlay.id = 'securityCaptureOverlay';
+    overlay.innerHTML = `
+      <div style="font-size: 3rem; margin-bottom: 12px;">🔒</div>
+      <h3 style="font-size: 1.4rem; font-weight: 900; color: #fef3c7; margin-bottom: 8px;">설문 문항 보안 보호 모드</h3>
+      <p style="font-size: 0.98rem; color: #e2e8f0; max-width: 480px; line-height: 1.6; margin-bottom: 20px;">
+        브레인하이브 학습가치 유형검사의 모든 문항과 콘텐츠는 저작권 및 보안 정책에 의해 보호됩니다.<br>
+        <strong>화면 캡처, 인쇄, 드래그 및 무단 복제가 엄격히 금지</strong>되어 있습니다.
+      </p>
+      <button type="button" style="background: #d97706; color: #ffffff; border: none; border-radius: 8px; padding: 12px 26px; font-size: 1rem; font-weight: 800; cursor: pointer;">
+        확인 (검사 화면으로 돌아가기)
+      </button>
+    `;
+    document.body.appendChild(overlay);
+
+    function isInputElement(el) {
+      if (!el || !el.tagName) return false;
+      const tag = el.tagName.toUpperCase();
+      return tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT';
+    }
+
+    function isDirectorScreenActive() {
+      return (dashboardView && dashboardView.classList.contains('active')) ||
+             (reportView && reportView.classList.contains('active'));
+    }
+
+    function activateCaptureShield(clearClip = false) {
+      if (testView && testView.classList.contains('active')) {
+        testView.classList.add('security-blur-shield');
+        overlay.classList.add('active');
+      }
+      if (clearClip && navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText('보안 정책에 의해 설문 문항 복사 및 화면 캡처가 제한되어 있습니다.').catch(() => {});
+      }
+    }
+
+    function deactivateCaptureShield() {
+      if (testView) testView.classList.remove('security-blur-shield');
+      overlay.classList.remove('active');
+    }
+
+    overlay.addEventListener('click', () => {
+      deactivateCaptureShield();
+    });
+
+    // 1. Block Right-Click Context Menu
+    document.addEventListener('contextmenu', (e) => {
+      if (!isDirectorScreenActive()) {
+        e.preventDefault();
+      }
+    });
+
+    // 2. Block Text Dragging & Selection
+    document.addEventListener('selectstart', (e) => {
+      if (!isInputElement(e.target) && !isDirectorScreenActive()) {
+        e.preventDefault();
+      }
+    });
+
+    document.addEventListener('dragstart', (e) => {
+      if (!isDirectorScreenActive()) {
+        e.preventDefault();
+      }
+    });
+
+    // 3. Block Copy & Cut Events on Student Screens
+    document.addEventListener('copy', (e) => {
+      if (!isDirectorScreenActive() && !isInputElement(e.target)) {
+        e.preventDefault();
+        if (e.clipboardData) {
+          e.clipboardData.setData('text/plain', '보안 정책에 의해 설문 문항 복사가 제한되어 있습니다.');
+        }
+      }
+    });
+
+    document.addEventListener('cut', (e) => {
+      if (!isDirectorScreenActive() && !isInputElement(e.target)) {
+        e.preventDefault();
+      }
+    });
+
+    // 4. Block Capture / Copy / Print / DevTools Keyboard Shortcuts
+    window.addEventListener('keydown', (e) => {
+      const key = (e.key || '').toLowerCase();
+
+      // PrintScreen key detection
+      if (e.key === 'PrintScreen' || e.keyCode === 44) {
+        e.preventDefault();
+        activateCaptureShield(true);
+        alert('🔒 보안 정책에 의해 화면 캡처(PrintScreen)가 차단되었습니다.');
+        return;
+      }
+
+      // Windows Snipping Tool (Win+Shift+S) / Mac Screenshot (Cmd+Shift+3/4/5)
+      if ((e.metaKey || e.ctrlKey) && e.shiftKey && (key === 's' || key === '3' || key === '4' || key === '5')) {
+        e.preventDefault();
+        activateCaptureShield(true);
+        return;
+      }
+
+      if (!isDirectorScreenActive()) {
+        // Block F12 & Ctrl+Shift+I / J / C (DevTools)
+        if (e.key === 'F12' || ((e.ctrlKey || e.metaKey) && e.shiftKey && (key === 'i' || key === 'j' || key === 'c'))) {
+          e.preventDefault();
+          return;
+        }
+
+        // Block Ctrl+C, Ctrl+X, Ctrl+A, Ctrl+S, Ctrl+U, Ctrl+P (outside input fields)
+        if ((e.ctrlKey || e.metaKey) && ['c', 'x', 'a', 's', 'u', 'p'].includes(key)) {
+          if (isInputElement(e.target) && ['c', 'x', 'a'].includes(key)) {
+            return;
+          }
+          e.preventDefault();
+          if (key === 'p') {
+            alert('🔒 보안 정책에 의해 설문 화면 인쇄가 금지되어 있습니다.');
+          }
+        }
+      }
+    });
+
+    window.addEventListener('keyup', (e) => {
+      if (e.key === 'PrintScreen' || e.keyCode === 44) {
+        activateCaptureShield(true);
+      }
+    });
+
+    // 5. Window Focus-Loss / Visibility Shield (Blocks external capture tools when #testView is active)
+    window.addEventListener('blur', () => {
+      if (testView && testView.classList.contains('active')) {
+        activateCaptureShield(false);
+      }
+    });
+
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden && testView && testView.classList.contains('active')) {
+        activateCaptureShield(false);
+      }
+    });
+  })();
+
   window.onSupabaseRecordsSynced = function() {
+    if (typeof renderDirectorApplications === 'function') renderDirectorApplications();
     if (typeof populateStage1StudentSelect === 'function') populateStage1StudentSelect();
     if (dashboardView && dashboardView.classList.contains('active') && typeof renderDirectorDashboard === 'function') {
       renderDirectorDashboard();
@@ -406,7 +1097,7 @@ document.addEventListener('DOMContentLoaded', () => {
       qRow.innerHTML = `
         <div class="q-left-compact">
           <span class="q-num-pill">#${q.id}</span>
-          <span class="q-text-compact" title="${q.text}">${q.text}</span>
+          <span class="q-text-compact">${q.text}</span>
         </div>
         <div class="options-row-compact">
           <div class="chip-compact ${currentVal === 1 ? 'selected' : ''}" data-val="1">1 전혀아니다</div>
@@ -621,6 +1312,8 @@ document.addEventListener('DOMContentLoaded', () => {
         checkTempSession();
   
         alert(`🎉 진단 검사가 성공적으로 제출되었습니다!\n\n응답 결과는 원장님(선생님)의 심층 분석 후 리포트로 제공됩니다.`);
+        updateApplicationStatusForStudent(state.student.name, '1단계 완료 (원장 확정 대기)');
+        exitAuthKeySession();
         showView(completeView);
   
       } else if (state.courseType === 'STAGE2_SUB') {
@@ -666,6 +1359,8 @@ document.addEventListener('DOMContentLoaded', () => {
         alert(`🎉 2단계 세부 유형 진단이 성공적으로 제출되었습니다!
   
   원장님의 최종 확정 후 1:1 레포트 결과를 확인하실 수 있습니다.`);
+        updateApplicationStatusForStudent(state.student.name, '검사 완료 (사용 종료)');
+        exitAuthKeySession();
         showView(completeView);
   
       } else {
@@ -704,6 +1399,8 @@ document.addEventListener('DOMContentLoaded', () => {
   
         localStorage.removeItem('DIAGNOSTIC_TEMP_SESSION');
         checkTempSession();
+        updateApplicationStatusForStudent(state.student.name, '검사 완료 (사용 종료)');
+        exitAuthKeySession();
   
         showView(completeView);
       }
@@ -879,12 +1576,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function handleDirectorLogin() {
     const pw = inputDirectorPassword ? inputDirectorPassword.value.trim() : '';
-    if (pw === '3995' || pw === '1234') {
+    if (pw === '3995') {
       if (directorModal) directorModal.classList.remove('active');
       renderDirectorDashboard();
       showView(dashboardView);
     } else {
-      alert('비밀번호가 올바르지 않습니다. (비밀번호: 3995)');
+      alert('비밀번호가 올바르지 않습니다.');
       if (inputDirectorPassword) {
         inputDirectorPassword.value = '';
         inputDirectorPassword.focus();
@@ -903,7 +1600,8 @@ document.addEventListener('DOMContentLoaded', () => {
   if (btnCompleteHome) {
     btnCompleteHome.addEventListener('click', (e) => {
       e.preventDefault();
-      showView(coverView);
+      exitAuthKeySession();
+      showView(introView || coverView);
     });
   }
 
@@ -1244,6 +1942,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Director Dashboard Renderer
   function renderDirectorDashboard() {
+    if (typeof renderDirectorApplications === 'function') renderDirectorApplications();
     const records = getStoredRecords();
     records.sort((a, b) => {
       const nameA = (a.student && a.student.name) ? a.student.name.trim() : '';
@@ -1438,6 +2137,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (currentRec.status === '1단계 완료 (원장 확정 대기)') {
           currentRec.status = '1단계 확정 완료 (2단계 대기)';
           saveStoredRecords(records);
+          updateApplicationStatusForStudent(currentRec.student.name, '1단계 확정 완료 (2단계 진입 가능)');
           state.confirmedMajor = confirmedMajor;
   
           alert(`[${currentRec.student.name}] 학생의 1단계 대분류가 [${confirmedMajor}] (으)로 확정 저장되었습니다.
@@ -1522,7 +2222,13 @@ document.addEventListener('DOMContentLoaded', () => {
   // Render 1:1 Exact PPT Slide Report (Sub-Types)
   function renderReport(data) {
     ensureOriginalPptDeck();
-    if (btnPrintReport) btnPrintReport.innerHTML = '🖨️ 종양식(A4 세로) 3장 세부 레포트 인쇄 / PDF 저장';
+    if (btnPrintReport) btnPrintReport.innerHTML = '🖨️ 종양식(A4 세로) 3장 세부 레포트 인쇄';
+    if (btnPrintReportTop) btnPrintReportTop.innerHTML = '🖨️ 3장 세부 레포트 인쇄';
+    if (btnDownloadPdf) btnDownloadPdf.innerHTML = '📥 PDF 파일로 즉시 다운로드 (3장 세부 리포트)';
+    if (btnDownloadPdfTop) btnDownloadPdfTop.innerHTML = '📥 PDF 파일로 즉시 다운로드 (3장)';
+    const safeReportName = ((state.student && state.student.name) ? state.student.name : '표준').replace(/[\\/:*?"<>|\s]/g, '_');
+    const safeReportType = (data.title || '세부유형리포트').replace(/[\\/:*?"<>|\s]/g, '_');
+    currentReportPdfFilename = `브레인하이브_세부유형리포트_${safeReportName}_${safeReportType}.pdf`;
 
     const imgFolder = data.imgFolder || '안정형-구조패턴고정형';
     const isText = !!data.isTextBased;
@@ -1982,7 +2688,7 @@ document.addEventListener('DOMContentLoaded', () => {
           <div class="srp-header-title">브레인하이브 학습가치 유형검사 | 학생 개인 진단 리포트</div>
           <div class="srp-header-sub">Brain Hive Learning Values Type Assessment — Individual Diagnostic Report</div>
         </div>
-        <div class="srp-header-inst">유주코칭&amp;컨설팅<br>대치리드인 유주코칭국어학원</div>
+        <div class="srp-header-inst">유주코칭&amp;컨설팅<br>유주코칭국어학원</div>
       </div>
 
       <!-- 학생 기본 정보 -->
@@ -2099,7 +2805,13 @@ document.addEventListener('DOMContentLoaded', () => {
     deck.appendChild(card);
 
     // 인쇄 버튼 텍스트 변경
-    if (btnPrintReport) btnPrintReport.innerHTML = '🖨️ 학생 개인 리포트 인쇄 / PDF 저장';
+    if (btnPrintReport) btnPrintReport.innerHTML = '🖨️ 학생 개인 리포트 인쇄';
+    if (btnPrintReportTop) btnPrintReportTop.innerHTML = '🖨️ 학생 개인 리포트 인쇄';
+    if (btnDownloadPdf) btnDownloadPdf.innerHTML = '📥 PDF 파일로 즉시 다운로드 (학생 개인 리포트)';
+    if (btnDownloadPdfTop) btnDownloadPdfTop.innerHTML = '📥 PDF 파일로 즉시 다운로드 (개인 리포트)';
+    const safePersonalName = sName.replace(/[\\/:*?"<>|\s]/g, '_');
+    const safePersonalMajor = majorName.replace(/[\\/:*?"<>|\s]/g, '_');
+    currentReportPdfFilename = `브레인하이브_개인진단리포트_${safePersonalName}_${safePersonalMajor}.pdf`;
 
     showView(reportView);
   }
@@ -2368,11 +3080,148 @@ document.addEventListener('DOMContentLoaded', () => {
       </div>
     `;
     reportDeck.appendChild(slide4);
-    if (btnPrintReport) btnPrintReport.innerHTML = '🖨️ 종양식(A4 세로) 4장 종합 레포트 인쇄 / PDF 저장';
+    if (btnPrintReport) btnPrintReport.innerHTML = '🖨️ 종양식(A4 세로) 4장 종합 레포트 인쇄';
+    if (btnPrintReportTop) btnPrintReportTop.innerHTML = '🖨️ 4장 종합 레포트 인쇄';
+    if (btnDownloadPdf) btnDownloadPdf.innerHTML = '📥 PDF 파일로 즉시 다운로드 (4장 종합 리포트)';
+    if (btnDownloadPdfTop) btnDownloadPdfTop.innerHTML = '📥 PDF 파일로 즉시 다운로드 (4장)';
+    const safeMajorStudent = sName.replace(/[\\/:*?"<>|\s]/g, '_');
+    const safeMajorCat = majorCategory.replace(/[\\/:*?"<>|\s]/g, '_');
+    currentReportPdfFilename = `브레인하이브_${safeMajorCat}_종합리포트_${safeMajorStudent}.pdf`;
   }
 
 
-  // Report Action Buttons (Back to Dashboard & Print)
+  // Report Action Buttons (Back to Dashboard, Direct PDF Download & Print)
+  if (btnBackToDashboardTop) {
+    btnBackToDashboardTop.addEventListener('click', () => {
+      showView(dashboardView);
+    });
+  }
+
+  async function downloadReportAsPdf() {
+    const reportDeck = document.getElementById('reportPptDeck');
+    if (!reportDeck) return;
+
+    if (typeof window.html2canvas !== 'function' || !window.jspdf || !window.jspdf.jsPDF) {
+      alert('PDF 변환 라이브러리를 불러오지 못해 인쇄/PDF 저장 창을 엽니다.\n인쇄 대상에서 [PDF로 저장]을 선택해 주세요.');
+      window.print();
+      return;
+    }
+
+    const pages = Array.from(
+      reportDeck.querySelectorAll('.ppt-slide-portrait, .student-report-card, .major-report-card')
+    ).filter(el => el.offsetParent !== null);
+
+    if (pages.length === 0) {
+      alert('다운로드할 리포트 페이지가 없습니다.');
+      return;
+    }
+
+    const origBottomText = btnDownloadPdf ? btnDownloadPdf.innerHTML : '';
+    const origTopText = btnDownloadPdfTop ? btnDownloadPdfTop.innerHTML : '';
+
+    const setDownloadBtnState = (text, disabled) => {
+      if (btnDownloadPdf) {
+        btnDownloadPdf.innerHTML = text;
+        btnDownloadPdf.disabled = disabled;
+        btnDownloadPdf.style.opacity = disabled ? '0.75' : '1';
+      }
+      if (btnDownloadPdfTop) {
+        btnDownloadPdfTop.innerHTML = text;
+        btnDownloadPdfTop.disabled = disabled;
+        btnDownloadPdfTop.style.opacity = disabled ? '0.75' : '1';
+      }
+    };
+
+    try {
+      setDownloadBtnState(`⏳ PDF 생성 준비 중... (총 ${pages.length}장)`, true);
+      const { jsPDF } = window.jspdf;
+      const pdf = new jsPDF({
+        orientation: 'portrait',
+        unit: 'mm',
+        format: 'a4',
+        compress: true
+      });
+
+      const pageWidthMm = 210;
+      const pageHeightMm = 297;
+
+      for (let i = 0; i < pages.length; i++) {
+        const pageEl = pages[i];
+        setDownloadBtnState(`⏳ PDF 변환 중... (${i + 1} / ${pages.length}장)`, true);
+
+        await new Promise(resolve => setTimeout(resolve, 40));
+
+        const canvas = await window.html2canvas(pageEl, {
+          scale: 2,
+          useCORS: true,
+          allowTaint: false,
+          backgroundColor: '#ffffff',
+          logging: false,
+          windowWidth: Math.max(document.documentElement.clientWidth || 0, 1100),
+          onclone: (clonedDoc) => {
+            clonedDoc.querySelectorAll('img').forEach(img => {
+              const rawSrc = img.getAttribute('src');
+              if (!rawSrc || rawSrc.trim() === '' || img.offsetParent === null) {
+                img.remove();
+              }
+            });
+            const styleEl = clonedDoc.createElement('style');
+            styleEl.textContent = `
+              .ppt-slide-portrait, .student-report-card, .major-report-card {
+                box-shadow: none !important;
+                border-radius: 0 !important;
+                margin: 0 !important;
+              }
+              ${window.location.protocol === 'file:' ? `
+              .major-report-card::before, .ppt-slide-portrait::before {
+                background-image: none !important;
+                border: 3px double #b45309 !important;
+                border-radius: 4px !important;
+              }
+              ` : ''}
+            `;
+            clonedDoc.head.appendChild(styleEl);
+          }
+        });
+
+        const imgData = canvas.toDataURL('image/jpeg', 0.96);
+        if (i > 0) {
+          pdf.addPage('a4', 'portrait');
+        }
+        pdf.addImage(imgData, 'JPEG', 0, 0, pageWidthMm, pageHeightMm, undefined, 'FAST');
+      }
+
+      const filename = currentReportPdfFilename || '브레인하이브_진단리포트.pdf';
+      pdf.save(filename);
+    } catch (err) {
+      console.error('PDF 생성 오류:', err);
+      alert('PDF 직접 생성 중 오류가 발생하여 브라우저 PDF 저장 창을 실행합니다.\n인쇄 대상에서 [PDF로 저장]을 선택해 주세요.');
+      window.print();
+    } finally {
+      if (btnDownloadPdf) {
+        btnDownloadPdf.innerHTML = origBottomText || '📥 PDF 파일로 즉시 다운로드';
+        btnDownloadPdf.disabled = false;
+        btnDownloadPdf.style.opacity = '1';
+      }
+      if (btnDownloadPdfTop) {
+        btnDownloadPdfTop.innerHTML = origTopText || '📥 PDF 파일로 즉시 다운로드';
+        btnDownloadPdfTop.disabled = false;
+        btnDownloadPdfTop.style.opacity = '1';
+      }
+    }
+  }
+
+  if (btnDownloadPdf) {
+    btnDownloadPdf.addEventListener('click', downloadReportAsPdf);
+  }
+  if (btnDownloadPdfTop) {
+    btnDownloadPdfTop.addEventListener('click', downloadReportAsPdf);
+  }
+  if (btnPrintReportTop) {
+    btnPrintReportTop.addEventListener('click', () => {
+      window.print();
+    });
+  }
   if (btnBackToDashboard) {
     btnBackToDashboard.addEventListener('click', () => {
       showView(dashboardView);
